@@ -2,6 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    shader.load("shaders/shader");
 
 }
 
@@ -12,7 +13,12 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
+    ofSetColor(255);
+    shader.begin();
+    shader.setUniform2f("res", ofGetWidth(), ofGetHeight());
+    shader.setUniform2f("mouse", mouseX, mouseY);
+    ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
+    shader.end();
 }
 
 //--------------------------------------------------------------
