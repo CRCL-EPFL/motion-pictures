@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    shader.load("shaders/shader");
+    shader.load("shaders/vert.vert", "shaders/frag.frag");
 
 }
 
