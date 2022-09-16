@@ -51,18 +51,18 @@ void main() {
     
     // define colors
     
-    vec3 blue=vec3(35.,122.,144.)/255.;
+    vec3 blue=vec3(93.,134.,185.)/255.;
     vec3 pink=vec3(255.,122.,114.)/255.;
     vec3 green=vec3(44.,162.,148.)/255.;
-    vec3 black=vec3(20.,10.,0.)/255.;
-    vec3 orange=vec3(255.,78.,0.)/255.;
+    vec3 white=vec3(230.,230.,230.)/255.;
+    vec3 orange=vec3(230.,155.,120.)/255.;
     
     vec3 vanta=vec3(-25,-25,-25)/255.;
     
     // lay in color blobs
-    vec3 color=vec3(0.);
+    vec3 color=white;
     color=mix(color,blue,dA);
-    color=mix(color,vanta,dC);
+    color=mix(color,white,dC);
     color=mix(color,pink,dB);
     color=mix(color,green,dD);
     color=mix(color,orange,dE);
