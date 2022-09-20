@@ -21,7 +21,7 @@
 title: Motion Pictures
 email: eric.duong@epfl.ch
 description: A research installation
-baseurl: ''````
+baseurl: ''
 url: "https://crcl-epfl.github.io/motion-pictures/" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: jekyllrb
 github_username:  eric-duong
