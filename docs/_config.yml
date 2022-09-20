@@ -31,8 +31,8 @@ markdown: kramdown
 github: [metadata]
 
 # Build settings
-# remote_theme: pages-themes/minimal@v0.2.0
-theme: minima
+remote_theme: pages-themes/minimal@v0.2.0
+# theme: minima
 
 plugins:
 - jekyll-remote-theme
