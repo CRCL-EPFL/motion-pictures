@@ -1,6 +1,6 @@
 ---
 layout: page
-title: "Home"
+title: "Motion Pictures"
 ---
 *This site is a work in progress. More information, pages, and French language support will be added as the project develops.*
 

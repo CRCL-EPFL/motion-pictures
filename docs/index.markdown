@@ -7,7 +7,6 @@ layout: home
 
 *This site is a work in progress. More information, pages, and French language support will be added as the project develops.*
 
-# Motion Pictures
 Motion Pictures is a research installation that utilizes computation to guide pedestrians through public spaces.
 
 ## Data Policy
