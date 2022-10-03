@@ -1,6 +1,8 @@
-# Visual Studio stuff
-*.vs
+# oF files
 *.make
+
+# Visual Studio project files
+*.vs
 *.rc
 *.sln
 *.vcxproj
@@ -11,3 +13,11 @@ obj/
 *.exp
 *.lib
 *.pdb
+
+# Xcode project files
+*.app
+*.xcodeproj
+Makefile
+*.plist
+*.xcconfig
+data/
