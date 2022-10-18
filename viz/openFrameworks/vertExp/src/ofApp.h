@@ -21,6 +21,7 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-        ofShader shader;
-        ofPlanePrimitive plane;
+    ofShader shader;
+    ofPlanePrimitive plane;
+    ofImage img;
 };

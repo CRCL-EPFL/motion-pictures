@@ -20,4 +20,3 @@ obj/
 Makefile
 *.plist
 *.xcconfig
-data/
