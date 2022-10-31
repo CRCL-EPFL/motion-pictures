@@ -4,54 +4,58 @@
 void ofApp::setup(){
     shader.load("shaders/vert.vert", "shaders/frag.frag");
     
-    float planeScale = 0.75;
-    int planeWidth = ofGetWidth() * planeScale;
-    int planeHeight = ofGetHeight() * planeScale;
-    int planeGridSize = 20;
-    int planeColumns = planeWidth / planeGridSize;
-    int planeRows = planeHeight / planeGridSize;
-    
-    plane.set(planeWidth, planeHeight, planeColumns, planeRows, OF_PRIMITIVE_TRIANGLES);
+    img.allocate(80, 60, OF_IMAGE_GRAYSCALE);
+
+    plane.set(800, 600, 80, 60);
+    plane.mapTexCoordsFromTexture(img.getTexture());
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    float noiseScale = ofMap(mouseX, 0, ofGetWidth(), 0, 0.1);
+    float noiseVel = ofGetElapsedTimef();
 
+    ofPixels & pixels = img.getPixels();
+    int w = img.getWidth();
+    int h = img.getHeight();
+    for(int y=0; y<h; y++) {
+        for(int x=0; x<w; x++) {
+            int i = y * w + x;
+            float noiseValue = ofNoise(x * noiseScale, y * noiseScale, noiseVel);
+            pixels[i] = 255 * noiseValue;
+        }
+    }
+    img.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    // bind our texture. in our shader this will now be tex0 by default
+    // so we can just go ahead and access it there.
+    img.getTexture().bind();
+
     shader.begin();
-    
-    float percentX = mouseX / (float)ofGetWidth();
-    // Can't exceed set values if mouse goes beyond window
-    percentX = ofClamp(percentX, 0, 1);
-    // Mouse x position changes the color
-    // Make sure to use ofFloatColor so that values are 0 to 1
-    ofFloatColor colorL = ofColor::magenta;
-    ofFloatColor colorR = ofColor::blue;
-    // Nondestructive of colorL
-    ofFloatColor colorMix = colorL.getLerped(colorR, percentX);
-    float mouseColor[4] = {colorMix.r, colorMix.g, colorMix.b, colorMix.a};
-    shader.setUniform4fv("mouseColor", &mouseColor[0]);
-    
-    // Translate plane to center of window
-    float tx = ofGetWidth() / 2.0;
-    float ty = ofGetHeight() / 2.0;
-    
-    // Offset mouse by the same amount as the plane
-    float mx = mouseX - tx;
-    float my = mouseY - ty;
-    
-    shader.setUniform1f("mouseRange", 150);
-    shader.setUniform2f("mousePos", mx, my);
-    
-    // Translate near end
+
+    ofPushMatrix();
+
+    // translate plane into center screen.
+    float tx = ofGetWidth() / 2;
+    float ty = ofGetHeight() / 2;
     ofTranslate(tx, ty);
-    
+
+    // the mouse/touch Y position changes the rotation of the plane.
+    float percentY = mouseY / (float)ofGetHeight();
+    float rotation = ofMap(percentY, 0, 1, -60, 60, true) + 60;
+    ofRotateDeg(rotation, 1, 0, 0);
+
     plane.drawWireframe();
-    
+
+    ofPopMatrix();
+
     shader.end();
+
+    ofSetColor(ofColor::white);
+    img.draw(0, 0);
 }
 
 //--------------------------------------------------------------
