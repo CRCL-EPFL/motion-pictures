@@ -2,8 +2,9 @@
 
 uniform vec2 u_res;
 uniform float u_time;
+uniform float pos[20];
 
-const int BALLS = 25;
+const int BALLS = 6;
 
 // noise and rand functions stolen from stack overflow :)
 float rand(float n){return fract(sin(n) * 43758.5453123);}
@@ -51,7 +52,8 @@ void main()
         vec2 bpos = vec2(perlinNoise(vec2(float(i*3218) + cos(u_time*0.1), u_time*0.1)), perlinNoise(vec2(float(i*1357) + sin(u_time*0.1), -u_time*0.1))) / 5.0;
         bpos += vec2(0.5 * u_res.x/u_res.y,0.5);
         dist += hsv2rgb(vec3(float(i) / float(BALLS), 1.0, 1.0)) * 1.0 / (pow(position.x - bpos.x, 2.0) + pow(position.y - bpos.y, 2.0));
+//        dist += hsv2rgb(vec3(float(i) / float(BALLS), 1.0, 1.0));
     }
     
-    fragColor = vec4(dist/1000., 1.0);
+    fragColor = vec4(dist/(sin(u_time) * 500. + 500.), 1.0);
 }
