@@ -20,3 +20,8 @@ obj/
 Makefile
 *.plist
 *.xcconfig
+
+# Data
+*.mov
+*.mp4
+*.avi

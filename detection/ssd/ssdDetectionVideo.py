@@ -5,13 +5,12 @@ from imutils.video import VideoStream
 from imutils.video import FPS
 import imutils
 import time
-from blur import blur
 
 # SSD people detector with VideoWriter
 
 ap = argparse.ArgumentParser()
-ap.add_argument("-p", "--prototxt", required=True)
-ap.add_argument("-m", "--model", required=True)
+ap.add_argument("-p", "--prototxt", default="mobilenetssd/MobileNetSSD_deploy.prototxt.txt")
+ap.add_argument("-m", "--model", default="mobilenetssd/MobileNetSSD_deploy.caffemodel")
 ap.add_argument("-c", "--confidence", type=float, default=0.4)
 args = vars(ap.parse_args())
 
@@ -32,14 +31,16 @@ net = cv.dnn.readNetFromCaffe(args["prototxt"], args["model"])
 
 # init video stream
 
-vs = VideoStream(src=0).start()
+# vs = VideoStream(src=0).start()
+vs = cv.VideoCapture('capturePerspective.mov')
 time.sleep(2.0)
 fps = FPS().start()
 
-result = cv.VideoWriter('capturePerspective.avi', cv.VideoWriter_fourcc(*'MJPG'), 10, (1920, 1080))
+# result = cv.VideoWriter('capturePerspective.avi', cv.VideoWriter_fourcc(*'MJPG'), 10, (1920, 1080))
 
 while True:
-    frame = vs.read()
+    # frame = vs.read()
+    success, frame = vs.read()
     # frame = imutils.resize(frame, width = 600)
 
     # gray frame
@@ -71,11 +72,11 @@ while True:
 
             label = "{}: {:.2f}%".format(CLASSES[idx], confidence*100)
             cv.rectangle(frame,(startX, startY), (endX, endY), COLORS[idx], 2)
+            cv.circle(frame, (int(startX + (endX-startX)/2), endY), 4, (0,255,0), -1)
             # text positioning
             y = startY - 15 if startY-15 > 15 else startY+15
             cv.putText(frame, label, (startX, y), cv.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)
 
-    result.write(frame)
 
     cv.imshow("frame", frame)
 
@@ -89,7 +90,7 @@ while True:
 fps.stop()
 print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
-result.release()
 
 cv.destroyAllWindows()
-vs.stop()
+vs.release()
+# vs.stop()
