@@ -1,10 +1,6 @@
 import cv2 as cv
 import numpy as np
 import argparse
-from imutils.video import VideoStream
-from imutils.video import FPS
-import imutils
-from tracking.centroidtracker import CentroidTracker
 import time
 
 # SSD people detector with VideoWriter
@@ -35,7 +31,6 @@ net = cv.dnn.readNetFromCaffe(args["prototxt"], args["model"])
 # vs = VideoStream(src=0).start()
 vs = cv.VideoCapture('../data/video/capturePerspective.mov')
 time.sleep(2.0)
-fps = FPS().start()
 
 # Get matrix for transform
 
@@ -129,9 +124,6 @@ while True:
     if key == ord("q"):
         break
 
-    fps.update()
-
-fps.stop()
 print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
 
