@@ -31,17 +31,35 @@ net = cv.dnn.readNetFromCaffe(args["prototxt"], args["model"])
 
 # init video stream
 
-vs = VideoStream(src=1).start()
+# vs = VideoStream(src=0).start()
+vs = cv.VideoCapture(1)
+
+vs.set(cv.CAP_PROP_FRAME_WIDTH, 1920)
+vs.set(cv.CAP_PROP_FRAME_HEIGHT, 1080)
+
 time.sleep(2.0)
 fps = FPS().start()
 
-result = cv.VideoWriter('capturePerspective.avi', cv.VideoWriter_fourcc(*'MJPG'), 10, (1920, 1080))
+# Get matrix for transform
+
+input_points = np.float32([[519, 589],[1228, 583],[409, 997],[1336, 983]])
+
+width = 1920
+height = int(width*.625)
+
+convertedPoints= np.float32([[0, 0], [width, 0], [0, height], [width, height]])
+
+matrix = cv.getPerspectiveTransform(input_points, convertedPoints)
 
 while True:
-    frame = vs.read()
+    # frame = vs.read()
+    success, frame = vs.read()
+    # frame = imutils.resize(frame, width = 600)
 
     frame = cv.rotate(frame, cv.ROTATE_180)
-    # frame = imutils.resize(frame, width = 600)
+
+    # Init blank frame
+    blank = np.zeros((height, width, 3), np.uint8)  
 
     # gray frame
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
@@ -72,13 +90,23 @@ while True:
 
             label = "{}: {:.2f}%".format(CLASSES[idx], confidence*100)
             cv.rectangle(frame,(startX, startY), (endX, endY), COLORS[idx], 2)
+            cv.circle(frame, (int(startX + (endX-startX)/2), endY), 4, (0,255,0), -1)
             # text positioning
             y = startY - 15 if startY-15 > 15 else startY+15
             cv.putText(frame, label, (startX, y), cv.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)
 
-    result.write(frame)
+            # Draw transformed points onto blank
+            dst = cv.transform(np.array([[[int(startX + (endX-startX)/2), endY]]]), matrix)[0]
+            # print(dst)
+            newCoords = (int(dst[0][0]/dst[0][2]), int(dst[0][1]/dst[0][2]))
+            print(newCoords)
+            cv.circle(blank, newCoords, 20, (0,255,0), -1)
+
 
     cv.imshow("frame", frame)
+    # Show blank with points
+    cv.imshow("transformed", blank)
+    # cv.imshow('transRaw', cv.warpPerspective(frame, matrix, (width, height)))
 
     key = cv.waitKey(1) & 0xFF
 
@@ -90,7 +118,7 @@ while True:
 fps.stop()
 print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
-result.release()
 
 cv.destroyAllWindows()
-vs.stop()
+vs.release()
+# vs.stop()

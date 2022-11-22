@@ -4,7 +4,7 @@ uniform vec2 u_res;
 uniform float u_time;
 uniform float pos[20];
 
-const int BALLS = 25;
+const int BALLS = 5;
 
 // noise and rand functions stolen from stack overflow :)
 float rand(float n){return fract(sin(n) * 43758.5453123);}
@@ -132,5 +132,5 @@ void main()
     }
     
 //    fragColor = vec4(dist/(sin(u_time) * 500. + 500.), 1.0);
-    fragColor = vec4(dist/500., 1.0) + grain*.4;
+    fragColor = vec4(dist/30., 1.0) + grain*.4;
 }
