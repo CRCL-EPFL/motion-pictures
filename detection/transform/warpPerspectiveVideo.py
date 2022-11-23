@@ -3,7 +3,7 @@ import numpy as np
 
 img = cv.imread('')
 
-input_points = np.float32([[300, 236],[1662, 236],[90, 856],[1846, 856]])
+input_points = np.float32([[519, 589],[1228, 583],[409, 997],[1336, 983]])
 
 width = 1920
 height = int(width*.5625)
