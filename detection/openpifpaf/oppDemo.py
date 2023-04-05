@@ -47,7 +47,9 @@ def cli():  # pylint: disable=too-many-statements,too-many-branches
     parser.add_argument('--separate-debug-ax', default=False, action='store_true')
     parser.add_argument('--disable-cuda', action='store_true',
                         help='disable CUDA')
+    # parser.add_argument('--rotate', default=None)
     args = parser.parse_args()
+    print(args)
 
     logger.configure(args, LOG)  # logger first
 
@@ -94,7 +96,20 @@ def main():
         visualize_image=(not args.json_output or args.video_output),
         visualize_processed_image=args.debug,
     )
+    # print('args.source: ' + str(args.source))
+    
+    # capture = Stream(args.source, preprocess=predictor.preprocess, with_raw_image=False)
     capture = Stream(args.source, preprocess=predictor.preprocess)
+    print('Stream rotate status: ' + str(capture.rotate))
+    print('What is a Stream obj?')
+    print(capture)
+
+    # capture = cv2.VideoCapture(args.source)
+
+    # while True:
+    #     _, image = capture.read()
+    #     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    #     image = cv2.rotate(image, cv2.ROTATE_180)
 
     annotation_painter = show.AnnotationPainter()
     animation = show.AnimationFrame(
@@ -108,6 +123,8 @@ def main():
     last_loop = time.perf_counter()
     for (ax, ax_second), (preds, _, meta) in \
             zip(animation.iter(), predictor.dataset(capture)):
+        print('Stream rotate status: ' + str(capture.rotate))
+        
         start_post = time.perf_counter()
         if args.json_output:
             with open(args.json_output, 'a+') as f:
