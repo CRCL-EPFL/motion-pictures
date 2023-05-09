@@ -1,6 +1,7 @@
 # oF files
 *.make
 
+
 # Visual Studio project files
 *.vs
 *.rc
@@ -8,6 +9,7 @@
 *.vcxproj
 *.vcxproj.*
 obj/
+of*/
 *.dll
 *.exe
 *.exp
