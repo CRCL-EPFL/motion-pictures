@@ -8,19 +8,19 @@ int main() {
 	settings.setGLVersion(3, 2);
 
 	settings.setSize(1920, 1200);
-	settings.setPosition(glm::vec2(1920, 0));
+	settings.setPosition(glm::vec2(0, 0));
 	settings.windowMode = OF_FULLSCREEN;
 	shared_ptr<ofAppBaseWindow> window1 = ofCreateWindow(settings);
 
 	// set the gui window
 	settings.windowMode = OF_WINDOW;
 	settings.setSize(300, 300);
-	settings.setPosition(glm::vec2(1920, 20));
+	settings.setPosition(glm::vec2(0, 20));
 	shared_ptr<ofAppBaseWindow> guiWindow = ofCreateWindow(settings);
 
 	settings.setSize(1920, 1200);
-	settings.setPosition(glm::vec2(1920, 0));
-	settings.windowMode = OF_FULLSCREEN;
+	settings.setPosition(glm::vec2(0, 1200));
+	//settings.windowMode = OF_FULLSCREEN;
 	// share OpenGL resources 
 	settings.shareContextWith = window1;	
 	shared_ptr<ofAppBaseWindow> window2 = ofCreateWindow(settings);

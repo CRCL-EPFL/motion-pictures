@@ -3,14 +3,15 @@
 uniform vec2 u_res;
 uniform bool u_mode;
 
+uniform sampler2DRect tex0;
+
 out vec4 fragColor;
 
 vec2 tile(vec2 _st, float _zoom){
     // Multiply by zoom factor and return the remainder, making the coordinate repeat 
     // Multiplier is 8 x 5 or 16 x 10 to match the aspect ratio of the projectors
-    // 
     _st.x *= 16.*_zoom;
-    _st.y *= 10.*_zoom;
+    _st.y *= 20.*_zoom;
     return fract(_st);
 }
 
