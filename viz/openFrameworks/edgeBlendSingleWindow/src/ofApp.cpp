@@ -12,25 +12,16 @@ void ofApp::setup() {
 	topBlend.load("shaders/blend.vert", "shaders/topBlend.frag");
 	botBlend.load("shaders/blend.vert", "shaders/botBlend.frag");
 
-	imgTop.load("testImage.jpg");
+	string imgName = "testImage" + to_string(2) + ".jpg";
+
+	imgTop.load(imgName);
 	imgTop.crop(0, 0, 1920, 1200);
 
-	imgBot.load("testImage.jpg");
+	imgBot.load(imgName);
 	imgBot.crop(0, 1080, 1920, 1200);
-
-	// split image 1200 px from top/bottom
-	// run value and gamma filter on each in shader
-	// place resulting textures in fbos
-	// or better to place them together while in shader and then output one fbo?
-
-	// recombine and draw onto combined plane
-	// raw output will have middle 240px duplicated
 
 	fboTop.allocate(1920, 1200);
 	fboBot.allocate(1920, 1200);
-
-	// start in picture mode
-	calMode = true;
 
 	parameters.setName("Calibration");
 	parameters.add(gamma.set("Gamma", 2.0, 1.0, 3.0));
@@ -61,7 +52,6 @@ void ofApp::draw() {
 
 		// need this or a drawn geometry for anything to show
 		imgTop.draw(0, 0);
-		//imgBot.draw(0, 0);
 
 		topBlend.end();
 
@@ -80,7 +70,6 @@ void ofApp::draw() {
 
 		// need this or a drawn geometry for anything to show
 		imgBot.draw(0, 0);
-		//imgTop.draw(0, 0);
 
 		botBlend.end();
 
@@ -93,8 +82,6 @@ void ofApp::draw() {
 		// draw raw images for reference
 		/*imgTop.draw(0, 0);
 		imgBot.draw(0, 1200);*/
-
-		ofDrawCircle(ofGetWidth() * 0.5, ofGetHeight() * 0.3, 30);
 	}
 
 	// else grid mode
@@ -118,21 +105,12 @@ void ofApp::draw() {
 	
 	// instructions
 	ofSetColor(225);
-	ofDrawBitmapString("'s' toggles shader", 10, 20);
 
 	gui.draw();
 }
 
-////--------------------------------------------------------------
-//void ofApp::drawGui(ofEventArgs& args) {
-//	gui.draw();
-//}
-
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
-	if (key == 's') {
-		calMode = !calMode;
-	}
 }
 
 //--------------------------------------------------------------

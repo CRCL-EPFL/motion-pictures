@@ -20,19 +20,18 @@ float blend(float x) {
 void main() {
 	vec2 pos = gl_FragCoord.xy/u_res.xy;
 
-	float col = map(gl_FragCoord.y, 0., overlap, 0., 1.);
-	col = blend(col);
-
-	//float col = smoothstep(0.80, 0.9, pos.y);
-	//float col = step(0.60, pos.y);
+	float mask = map(gl_FragCoord.y, 0., overlap, 0., 1.);
+	mask = blend(mask);
 
     // load in texture
 	vec4 texel0 = texture(tex0, texCoordVarying);
+	//vec4 texel0 = vec4(0.2, 0.6, 0., 1.);
 
-	vec3 color = texel0.rgb * col;
+	vec3 base = texel0.rgb * mask;
+	vec3 correct = vec3(pow(base.r, 1./gamma), pow(base.g, 1./gamma), pow(base.b, 1./gamma));
 
-	// gamma correction
-	color = vec3(pow(color.r, 1./gamma), pow(color.g, 1./gamma), pow(color.b, 1./gamma));
+	// mix between masked texture and gamma corrected based on mask value
+	vec3 color = mix(correct, base, mask);
 
 	outputColor = vec4(color, 1.);
 }

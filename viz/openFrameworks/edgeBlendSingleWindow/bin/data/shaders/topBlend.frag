@@ -20,16 +20,22 @@ float blend(float x) {
 void main() {
 	vec2 pos = gl_FragCoord.xy/u_res.xy;
 
-	float col = map(gl_FragCoord.y, u_res.y, u_res.y-overlap, 0., 1.);
-	col = blend(col);
+	// calculate location in overlap
+	float mask = map(gl_FragCoord.y, u_res.y, u_res.y-overlap, 0., 1.);
+	// get mask values
+	mask = blend(mask);
 
 	// load in texture
 	vec4 texel0 = texture(tex0, texCoordVarying);
+	//vec4 texel0 = vec4(0.2, 0.6, 0., 1.);
 
-	vec3 color = texel0.rgb * col;
+	// make vec3 to store masked texture
+	vec3 base = texel0.rgb * mask;
+	// vec3 to store gamma corrected mask
+	vec3 correct = vec3(pow(base.r, 1./gamma), pow(base.g, 1./gamma), pow(base.b, 1./gamma));
 
-	// gamma correction
-	color = vec3(pow(color.r, 1./gamma), pow(color.g, 1./gamma), pow(color.b, 1./gamma));
+	// mix between masked texture and gamma corrected based on mask value
+	vec3 color = mix(correct, base, mask);
 
 	outputColor = vec4(color, 1.);
 }
