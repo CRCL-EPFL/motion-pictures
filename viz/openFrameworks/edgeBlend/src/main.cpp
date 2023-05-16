@@ -9,7 +9,7 @@ int main() {
 
 	settings.setSize(1920, 1200);
 	settings.setPosition(glm::vec2(0, 0));
-	settings.windowMode = OF_FULLSCREEN;
+	//settings.windowMode = OF_FULLSCREEN;
 	shared_ptr<ofAppBaseWindow> window1 = ofCreateWindow(settings);
 
 	// set the gui window

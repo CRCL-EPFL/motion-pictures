@@ -31,16 +31,13 @@ void ofApp::setup() {
 
 	// start in picture mode
 	calMode = true;
-}
 
-//--------------------------------------------------------------
-void ofApp::setupGui() {
-	parameters.setName("parameters");
-	parameters.add(radius.set("radius", 50, 1, 200));
-	parameters.add(color.set("color", 100, ofColor(0, 0), 255));
-	parameters.add(mode.set("mode", false));
+	parameters.setName("Calibration");
+	parameters.add(gamma.set("Gamma", 2.0, 1.0, 3.0));
+	parameters.add(blendExp.set("Blend Power", 2, 1, 3));
+	parameters.add(overlap.set("Overlap", 120, 60, 240));
+	parameters.add(calib.set("Mode", true));
 	gui.setup(parameters);
-	ofSetBackgroundColor(0);
 }
 
 //--------------------------------------------------------------
@@ -49,23 +46,7 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-	// instructions
-	ofSetColor(225);
-	ofDrawBitmapString("'s' toggles shader", 10, 20);
-
-	// to be passed into the shaders as uniforms
-	int overlap = 120;
-	int blendExp = 3;
-	float gamma = 2.5;
-
-	//ofSetColor(0);
-
-	if (calMode) {
-		//ofSetColor(color);
-		ofDrawCircle(ofGetWidth() * 0.5, ofGetHeight() * 0.5, radius);
-		//ofSetColor(0);
-		ofDrawBitmapString(ofGetFrameRate(), 20, 20);
-
+	if (calib) {
 		// start FBO for top image
 		fboTop.begin();
 
@@ -112,6 +93,8 @@ void ofApp::draw() {
 		// draw raw images for reference
 		/*imgTop.draw(0, 0);
 		imgBot.draw(0, 1200);*/
+
+		ofDrawCircle(ofGetWidth() * 0.5, ofGetHeight() * 0.3, 30);
 	}
 
 	// else grid mode
@@ -133,12 +116,17 @@ void ofApp::draw() {
 		shader.end();
 	}
 	
-}
+	// instructions
+	ofSetColor(225);
+	ofDrawBitmapString("'s' toggles shader", 10, 20);
 
-//--------------------------------------------------------------
-void ofApp::drawGui(ofEventArgs& args) {
 	gui.draw();
 }
+
+////--------------------------------------------------------------
+//void ofApp::drawGui(ofEventArgs& args) {
+//	gui.draw();
+//}
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {

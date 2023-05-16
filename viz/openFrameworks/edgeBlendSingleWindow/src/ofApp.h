@@ -7,10 +7,8 @@ class ofApp : public ofBaseApp {
 
 public:
 	void setup();
-	void setupGui();
 	void update();
 	void draw();
-	void drawGui(ofEventArgs& args);
 
 	void keyPressed(int key);
 	void keyReleased(int key);
@@ -25,9 +23,10 @@ public:
 	void gotMessage(ofMessage msg);
 
 	ofParameterGroup parameters;
-	ofParameter<float> radius;
-	ofParameter<ofColor> color;
-	ofParameter<bool> mode;
+	ofParameter<float> gamma;
+	ofParameter<int> blendExp;
+	ofParameter<int> overlap;
+	ofParameter<bool> calib;
 	ofxPanel gui;
 
 	ofShader shader;
