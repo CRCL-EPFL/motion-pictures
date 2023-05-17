@@ -26,8 +26,8 @@ void ofApp::setup() {
 	parameters.setName("Calibration");
 	parameters.add(gamma.set("Gamma", 2.0, 1.0, 3.0));
 	parameters.add(blendExp.set("Blend Power", 2, 1, 3));
-	parameters.add(overlap.set("Overlap", 120, 60, 240));
-	parameters.add(calib.set("Mode", true));
+	parameters.add(overlap.set("Overlap", 120, 0, 240));
+	parameters.add(calib.set("Mode", false));
 	gui.setup(parameters);
 }
 
@@ -88,16 +88,16 @@ void ofApp::draw() {
 	else {
 		shader.begin();
 
-		// uniform for the mode
-		shader.setUniform1i("u_mode", 1);
 		// uniform for amount of overlap
-		shader.setUniform1f("u_overlap", 1.);
+		shader.setUniform1i("u_overlap", overlap);
 		// uniform for gamma value
-		shader.setUniform1f("u_gamma", 1.);
+		shader.setUniform1f("u_gamma", gamma);
 		// uniform for blend value
-		shader.setUniform1f("u_blend", 1.);
+		shader.setUniform1i("u_blendExp", blendExp);
+		shader.setUniform1f("u_time", ofGetElapsedTimef());
 		shader.setUniform2f("u_res", ofGetWidth(), ofGetHeight());
 
+		ofColor(0);
 		ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
 		
 		shader.end();
