@@ -35,12 +35,12 @@ vs = VideoStream(src=1).start()
 time.sleep(2.0)
 fps = FPS().start()
 
-result = cv.VideoWriter('capturePerspective.avi', cv.VideoWriter_fourcc(*'MJPG'), 10, (1920, 1080))
+# result = cv.VideoWriter('capturePerspective.avi', cv.VideoWriter_fourcc(*'MJPG'), 10, (1920, 1080))
 
 while True:
     frame = vs.read()
 
-    frame = cv.rotate(frame, cv.ROTATE_180)
+    # frame = cv.rotate(frame, cv.ROTATE_180)
     # frame = imutils.resize(frame, width = 600)
 
     # gray frame
@@ -76,7 +76,7 @@ while True:
             y = startY - 15 if startY-15 > 15 else startY+15
             cv.putText(frame, label, (startX, y), cv.FONT_HERSHEY_SIMPLEX, 0.5, COLORS[idx], 2)
 
-    result.write(frame)
+    # result.write(frame)
 
     cv.imshow("frame", frame)
 
@@ -90,7 +90,7 @@ while True:
 fps.stop()
 print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
-result.release()
+# result.release()
 
 cv.destroyAllWindows()
 vs.stop()

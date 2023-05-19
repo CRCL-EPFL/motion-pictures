@@ -11,4 +11,4 @@ Experimentation with vertex shaders as means of depth
 
 -----
 ## vvvv
-Folder for upcoming vvvv visualizations
+Folder for vvvv visualizations

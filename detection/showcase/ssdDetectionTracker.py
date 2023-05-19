@@ -1,5 +1,6 @@
 import cv2 as cv
 import numpy as np
+from imutils.video import VideoStream
 import argparse
 import time
 
@@ -28,8 +29,8 @@ net = cv.dnn.readNetFromCaffe(args["prototxt"], args["model"])
 
 # init video stream
 
-# vs = VideoStream(src=0).start()
-vs = cv.VideoCapture('../data/video/capturePerspective.mov')
+vs = VideoStream(src=0).start()
+# vs = cv.VideoCapture('../data/video/capturePerspective.mov')
 time.sleep(2.0)
 
 # Get matrix for transform
