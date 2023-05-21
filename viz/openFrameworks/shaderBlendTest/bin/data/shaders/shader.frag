@@ -81,7 +81,7 @@ void main()
     
     // Grain
     float strength = 16.0;
-        
+    
     float x = (position.x + 4.0 ) * (position.y + 4.0 ) * (u_time * 10.0);
     vec4 grain = vec4(mod((mod(x, 13.0) + 1.0) * (mod(x, 123.0) + 1.0), 0.01)-0.005) * strength;
     
@@ -91,46 +91,54 @@ void main()
         vec2 bpos = vec2(perlinNoise(vec2(float(i*3218) + cos(u_time*0.1), u_time*0.1)), perlinNoise(vec2(float(i*1357) + sin(u_time*0.1), -u_time*0.1))) / 5.0;
         bpos += vec2(0.5 * u_res.x/u_res.y,0.5);
         dist += hsv2rgb(vec3(float(i) / float(BALLS), 1.0, 1.0)) * 1.0 / (pow(position.x - bpos.x, 2.0) + pow(position.y - bpos.y, 2.0));
-        distBot += hsv2rgb(vec3(float(i) / float(BALLS), 1.0, 1.0)) * 1.0 / (pow(position.x - bpos.x, 2.0) + pow(position.y + u_overlap/u_res.y - bpos.y, 2.0));
+        //        distBot += hsv2rgb(vec3(float(i) / float(BALLS), 1.0, 1.0)) * 1.0 / (pow(position.x - bpos.x, 2.0) + pow(position.y + u_overlap/u_res.y - bpos.y, 2.0));
+        distBot += hsv2rgb(vec3(float(i) / float(BALLS), 1.0, 1.0)) * 1.0 / (pow(position.x - bpos.x, 2.0) + pow(position.y - bpos.y, 2.0));
     }
     
     float halfway = u_res.y/2.;
-
+    
     // calculate location in overlap
-	float mask = 1. - map(gl_FragCoord.y, halfway+u_overlap, halfway, 0., 1.);
-	// get mask values
-	mask = blend(mask);
-
+    float mask = 1. - map(gl_FragCoord.y, halfway+u_overlap, halfway, 0., 1.);
+    // get mask values
+    mask = blend(mask);
+    
     // calculate location in overlap
-	float maskBot = 1. - map(gl_FragCoord.y, halfway, halfway-u_overlap, 0., 1.);
-	// get mask values
-	maskBot = blend(maskBot);
-
+    float maskBot = 1. - map(gl_FragCoord.y, halfway-u_overlap, halfway, 0., 1.);
+    // get mask values
+    maskBot = blend(maskBot);
+    
     // make vec3 to store masked texture
-	vec3 base = dist.rgb/30. * step(halfway-u_overlap, gl_FragCoord.y);
-    //base = base * mask;
-	// vec3 to store gamma corrected mask
-	vec3 correct = vec3(pow(base.r, 1./u_gamma), pow(base.g, 1./u_gamma), pow(base.b, 1./u_gamma));
-
+    //    vec3 base = dist.rgb/30. * step(halfway-u_overlap, gl_FragCoord.y);
+    vec3 base = dist.rgb/30. * step(halfway, gl_FragCoord.y);
+    base = base * mask;
+    // vec3 to store gamma corrected mask
+    vec3 correct = vec3(pow(base.r, 1./u_gamma), pow(base.g, 1./u_gamma), pow(base.b, 1./u_gamma));
+    
     // make vec3 to store masked texture
-	vec3 baseBot = distBot.rgb/30. * (1. - step(halfway+u_overlap, gl_FragCoord.y));
-    //baseBot = baseBot * maskBot;
-	// vec3 to store gamma corrected mask
-	vec3 correctBot = vec3(pow(base.r, 1./u_gamma), pow(base.g, 1./u_gamma), pow(base.b, 1./u_gamma));
-
-	// mix between masked texture and gamma corrected based on mask value
-	//vec3 color = mix(correct, base, mask);
-	//vec3 color = base;
-	vec3 color = base+baseBot;
-
+    vec3 baseBot = distBot.rgb/30. * (1. - step(halfway, gl_FragCoord.y));
+    //    vec3 baseBot = distBot.rgb/30. * (1. - step(halfway+u_overlap, gl_FragCoord.y));
+    baseBot = baseBot * maskBot;
+    // vec3 to store gamma corrected mask
+    vec3 correctBot = vec3(pow(baseBot.r, 1./u_gamma), pow(baseBot.g, 1./u_gamma), pow(baseBot.b, 1./u_gamma));
+    
+    // mix between masked texture and gamma corrected based on mask value
+    vec3 color = mix(correct, base, mask);
+    vec3 colorBot = mix(correctBot, baseBot, maskBot);
+    //    vec3 color = baseBot;
+    //	vec3 color = base+baseBot;
+    
+    vec4 grainyCombine = vec4(color + colorBot, 1.) + grain*.4;
+    
     vec4 wholeShader = vec4(dist/30., 1.0) + grain*.4;
-
+    
     vec4 top = wholeShader * step(u_res.y/2. - u_overlap/2., gl_FragCoord.y);
-
     vec4 bot = wholeShader * (1. - step(u_res.y/2. + u_overlap/2., gl_FragCoord.y));
-
+    
     //fragColor = top + bot;
-    fragColor = vec4(color, 1.);
-    //fragColor = vec4(mask, mask, mask, 1.);
-    //fragColor = vec4(maskBot, maskBot, maskBot, 1.);
+//    fragColor = vec4(colorBot, 1.);
+    fragColor = grainyCombine;
+//    fragColor = vec4(base, 1.);
+//    fragColor = vec4(color+colorBot, 1.);
+//    fragColor = vec4(mask, mask, mask, 1.);
+//    fragColor = vec4(maskBot, maskBot, maskBot, 1.);
 }

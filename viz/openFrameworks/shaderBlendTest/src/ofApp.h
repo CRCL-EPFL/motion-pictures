@@ -26,14 +26,11 @@ public:
 	ofParameter<float> gamma;
 	ofParameter<int> blendExp;
 	ofParameter<int> overlap;
-	ofParameter<bool> calib;
 	ofxPanel gui;
 
 	ofShader shader;
 	ofShader botBlend;
 	ofShader topBlend;
-	ofImage imgTop;
-	ofImage imgBot;
 
 	ofFbo fboTop;
 	ofFbo fboBot;

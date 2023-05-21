@@ -12,14 +12,6 @@ void ofApp::setup() {
 	topBlend.load("shaders/blend.vert", "shaders/topBlend.frag");
 	botBlend.load("shaders/blend.vert", "shaders/botBlend.frag");
 
-	string imgName = "testImage" + to_string(1) + ".jpg";
-
-	imgTop.load(imgName);
-	imgTop.crop(0, 0, 1920, 1200);
-
-	imgBot.load(imgName);
-	imgBot.crop(0, 1080, 1920, 1200);
-
 	fboTop.allocate(1920, 1200);
 	fboBot.allocate(1920, 1200);
 
@@ -27,7 +19,6 @@ void ofApp::setup() {
 	parameters.add(gamma.set("Gamma", 2.0, 1.0, 3.0));
 	parameters.add(blendExp.set("Blend Power", 2, 1, 3));
 	parameters.add(overlap.set("Overlap", 120, 0, 240));
-	parameters.add(calib.set("Mode", false));
 	gui.setup(parameters);
 }
 
@@ -37,71 +28,21 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-	if (calib) {
-		// start FBO for top image
-		fboTop.begin();
+    shader.begin();
 
-		topBlend.begin();
+    // uniform for amount of overlap
+    shader.setUniform1i("u_overlap", overlap);
+    // uniform for gamma value
+    shader.setUniform1f("u_gamma", gamma);
+    // uniform for blend value
+    shader.setUniform1i("u_blendExp", blendExp);
+    shader.setUniform1f("u_time", ofGetElapsedTimef());
+    shader.setUniform2f("u_res", ofGetWidth(), ofGetHeight());
 
-		topBlend.setUniform2f("u_res", imgTop.getWidth(), imgTop.getHeight());
-		topBlend.setUniform1i("overlap", overlap);
-		topBlend.setUniform1i("blendExp", blendExp);
-		topBlend.setUniform1f("gamma", gamma);
-		//ofSetColor(0);
-		//ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
-
-		// need this or a drawn geometry for anything to show
-		imgTop.draw(0, 0);
-
-		topBlend.end();
-
-		fboTop.end();
-
-		// start FBO for bottom image
-
-		fboBot.begin();
-
-		botBlend.begin();
-
-		botBlend.setUniform2f("u_res", imgBot.getWidth(), imgBot.getHeight());
-		botBlend.setUniform1i("overlap", overlap);
-		botBlend.setUniform1i("blendExp", blendExp);
-		botBlend.setUniform1f("gamma", gamma);
-
-		// need this or a drawn geometry for anything to show
-		imgBot.draw(0, 0);
-
-		botBlend.end();
-
-		fboBot.end();
-
-		// draw top and bottom FBO to screen
-		fboTop.draw(0, 0);
-		fboBot.draw(0, 1200);
-
-		// draw raw images for reference
-		/*imgTop.draw(0, 0);
-		imgBot.draw(0, 1200);*/
-	}
-
-	// else grid mode
-	else {
-		shader.begin();
-
-		// uniform for amount of overlap
-		shader.setUniform1i("u_overlap", overlap);
-		// uniform for gamma value
-		shader.setUniform1f("u_gamma", gamma);
-		// uniform for blend value
-		shader.setUniform1i("u_blendExp", blendExp);
-		shader.setUniform1f("u_time", ofGetElapsedTimef());
-		shader.setUniform2f("u_res", ofGetWidth(), ofGetHeight());
-
-		ofColor(0);
-		ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
-		
-		shader.end();
-	}
+    ofColor(0);
+    ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
+    
+    shader.end();
 	
 	// instructions
 	ofSetColor(225);
