@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 
 # img = cv.imread('')
-video = cv.VideoCapture(1)
+video = cv.VideoCapture(0)
 
 video.set(cv.CAP_PROP_FRAME_WIDTH, 1920)
 video.set(cv.CAP_PROP_FRAME_HEIGHT, 1080)

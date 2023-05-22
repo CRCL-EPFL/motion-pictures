@@ -139,7 +139,7 @@ while True:
             (startX, startY, endX, endY) = box.astype("int")
             body_roi = gray[startY:endY, startX:endX]
 
-            label = "{}: {:.2f}%".format(confidence*100)
+            label = "{}: {:.2f}%".format(CLASSES[idx], confidence*100)
             cv.rectangle(frame,(startX, startY), (endX, endY), COLORS[idx], 2)
             # text positioning
             y = startY - 15 if startY-15 > 15 else startY+15
@@ -177,7 +177,7 @@ while True:
             (startX, startY, endX, endY) = box.astype("int")
             body_roi = gray[startY:endY, startX:endX]
 
-            label = "{}: {:.2f}%".format(confidence*100)
+            label = "{}: {:.2f}%".format(CLASSES[idx], confidence*100)
             cv.rectangle(frame2,(startX, startY), (endX, endY), COLORS[idx], 2)
             # text positioning
             y = startY - 15 if startY-15 > 15 else startY+15
