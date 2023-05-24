@@ -18,7 +18,7 @@ void ofApp::setup() {
 	parameters.setName("Calibration");
 	parameters.add(gamma.set("Gamma", 2.0, 1.0, 3.0));
 	parameters.add(blendExp.set("Blend Power", 2, 1, 3));
-	parameters.add(overlap.set("Overlap", 120, 0, 240));
+	parameters.add(overlap.set("Overlap", 0, 0, 900));
 	gui.setup(parameters);
 }
 

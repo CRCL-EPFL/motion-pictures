@@ -32,7 +32,7 @@ net = cv.dnn.readNetFromCaffe(args["prototxt"], args["model"])
 # init video stream
 
 # vs = VideoStream(src=0).start()
-vs = cv.VideoCapture(1)
+vs = cv.VideoCapture(0)
 
 vs.set(cv.CAP_PROP_FRAME_WIDTH, 1920)
 vs.set(cv.CAP_PROP_FRAME_HEIGHT, 1080)
@@ -42,7 +42,8 @@ fps = FPS().start()
 
 # Get matrix for transform
 
-input_points = np.float32([[519, 589],[1228, 583],[409, 997],[1336, 983]])
+# input_points = np.float32([[519, 589],[1228, 583],[409, 997],[1336, 983]])
+input_points = np.float32([[428, 449],[894, 297],[657, 895],[1210, 591]])
 
 width = 1920
 height = int(width*.625)

@@ -10,8 +10,8 @@ out vec4 fragColor;
 vec2 tile(vec2 _st, float _zoom){
     // Multiply by zoom factor and return the remainder, making the coordinate repeat 
     // Multiplier is 8 x 5 or 16 x 10 to match the aspect ratio of the projectors
-    _st.x *= 16.*_zoom;
-    _st.y *= 20.*_zoom;
+    _st.x *= 32.*_zoom;
+    _st.y *= 40.*_zoom;
     return fract(_st);
 }
 
@@ -36,7 +36,7 @@ void main()
     vec3 color = vec3(0.0);
 
     // Pass coordinate to tile function
-    position = tile(position, 2.);
+    position = tile(position, 1.);
 
     // Invert colors
     color = vec3(1. - box(position, vec2(.95)));

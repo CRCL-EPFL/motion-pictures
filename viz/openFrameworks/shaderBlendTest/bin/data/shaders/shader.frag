@@ -7,7 +7,7 @@ uniform int u_overlap;
 uniform int u_blendExp;
 uniform float u_gamma;
 
-const int BALLS = 5;
+const int BALLS = 4;
 
 float rand(float n){return fract(sin(n) * 43758.5453123);}
 
@@ -80,7 +80,7 @@ void main()
     position.x *= u_res.x / u_res.y;
     
     // Grain
-    float strength = 16.0;
+    float strength = 20.0;
     
     float x = (position.x + 4.0 ) * (position.y + 4.0 ) * (u_time * 10.0);
     vec4 grain = vec4(mod((mod(x, 13.0) + 1.0) * (mod(x, 123.0) + 1.0), 0.01)-0.005) * strength;
@@ -94,6 +94,8 @@ void main()
         //        distBot += hsv2rgb(vec3(float(i) / float(BALLS), 1.0, 1.0)) * 1.0 / (pow(position.x - bpos.x, 2.0) + pow(position.y + u_overlap/u_res.y - bpos.y, 2.0));
         distBot += hsv2rgb(vec3(float(i) / float(BALLS), 1.0, 1.0)) * 1.0 / (pow(position.x - bpos.x, 2.0) + pow(position.y - bpos.y, 2.0));
     }
+
+    //dist = clamp(dist, 0., 2.);
     
     float halfway = u_res.y/2.;
     
@@ -110,6 +112,8 @@ void main()
     // make vec3 to store masked texture
     //    vec3 base = dist.rgb/30. * step(halfway-u_overlap, gl_FragCoord.y);
     vec3 base = dist.rgb/30. * step(halfway, gl_FragCoord.y);
+    //base = vec3(clamp(dist.r, 0., 10.), clamp(dist.g, 0., 10.), clamp(dist.b, 0., 10.));
+//    base = vec3(4., 10., 0.);
     base = base * mask;
     // vec3 to store gamma corrected mask
     vec3 correct = vec3(pow(base.r, 1./u_gamma), pow(base.g, 1./u_gamma), pow(base.b, 1./u_gamma));

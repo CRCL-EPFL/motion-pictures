@@ -36,8 +36,6 @@ void Ball::update(float _x, float _y) {
     else if (!moving) {
         moveFrame = ofxeasing::map_clamp(ofGetElapsedTimef(), moveStartTime, moveEndTime, 1, 0, &ofxeasing::cubic::easeOut);
     }
-
-    destAngle = ofxeasing::map_clamp(ofGetElapsedTimef(), dirStartTime, dirEndTime, dirStartVal, dirEndVal, &ofxeasing::quart::easeOut);
 }
 
 void Ball::setMoveAnimation() {

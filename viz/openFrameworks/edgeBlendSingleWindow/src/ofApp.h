@@ -26,6 +26,7 @@ public:
 	ofParameter<float> gamma;
 	ofParameter<int> blendExp;
 	ofParameter<int> overlap;
+	ofParameter<int> trueOverlap;
 	ofParameter<bool> calib;
 	ofxPanel gui;
 

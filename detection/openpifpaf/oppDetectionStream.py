@@ -10,7 +10,7 @@ import openpifpaf as opp
 
 # init video stream
 
-vs = cv.VideoCapture(1)
+vs = cv.VideoCapture(0)
 
 vs.set(cv.CAP_PROP_FRAME_WIDTH, 1920)
 vs.set(cv.CAP_PROP_FRAME_HEIGHT, 1080)

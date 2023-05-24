@@ -10,23 +10,21 @@ D=np.array([[-0.01680471181040181], [-0.04507194951348153], [0.10890126839017801
 map1, map2 = cv.fisheye.initUndistortRectifyMap(K, D, np.eye(3), K, DIM, cv.CV_16SC2)
 
 def undistort(img, map1, map2):    
-    h,w = img.shape[:2]    
-    
     undistorted_img = cv.remap(img, map1, map2, interpolation=cv.INTER_LINEAR, borderMode=cv.BORDER_CONSTANT)    
     
     return undistorted_img
 
 # img = cv.imread('')
-video = cv.VideoCapture(1)
+video = cv.VideoCapture(0)
 
 video.set(cv.CAP_PROP_FRAME_WIDTH, 1920)
 video.set(cv.CAP_PROP_FRAME_HEIGHT, 1080)
 
 input_points = []
 
-width = 720
-# 16:10 aspect ratio of 1920 x 1080 to match projector
-height = int(width*.5625)
+width = 1920
+# 16:9 aspect ratio of 1920 x 1080 to match projector
+height = int(width*.9)
 
 convertedPoints= np.float32([[0, 0], [width, 0], [0, height], [width, height]])
 

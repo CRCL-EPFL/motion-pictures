@@ -18,7 +18,7 @@ void ofApp::setup() {
 	imgTop.crop(0, 0, 1920, 1200);
 
 	imgBot.load(imgName);
-	imgBot.crop(0, 1080, 1920, 1200);
+	//imgBot.crop(0, 940, 1920, 1200);
 
 	fboTop.allocate(1920, 1200);
 	fboBot.allocate(1920, 1200);
@@ -26,20 +26,23 @@ void ofApp::setup() {
 	parameters.setName("Calibration");
 	parameters.add(gamma.set("Gamma", 2.0, 1.0, 3.0));
 	parameters.add(blendExp.set("Blend Power", 2, 1, 3));
-	parameters.add(overlap.set("Overlap", 120, 60, 240));
+	parameters.add(trueOverlap.set("True Overlap", 807, 800, 900));
+	parameters.add(overlap.set("Overlap", 120, 60, 720));
 	parameters.add(calib.set("Mode", true));
 	gui.setup(parameters);
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
+	//imgBot.crop(0, trueOverlap, 1920, 1200);s
+
 }
 
 //--------------------------------------------------------------
 void ofApp::draw() {
 	if (calib) {
 		// start FBO for top image
-		fboTop.begin();
+		fboTop.begin(); 
 
 		topBlend.begin();
 
@@ -58,6 +61,8 @@ void ofApp::draw() {
 		fboTop.end();
 
 		// start FBO for bottom image
+		ofImage temp;
+		temp.cropFrom(imgBot, 0, trueOverlap, 1920, 1200);
 
 		fboBot.begin();
 
@@ -69,7 +74,7 @@ void ofApp::draw() {
 		botBlend.setUniform1f("gamma", gamma);
 
 		// need this or a drawn geometry for anything to show
-		imgBot.draw(0, 0);
+		temp.draw(0, 0);
 
 		botBlend.end();
 

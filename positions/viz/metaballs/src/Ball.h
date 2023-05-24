@@ -5,7 +5,7 @@
 #include "ofMain.h"
 #include "ofxEasing.h"
 
-class Halo {
+class Ball {
 private:
     float moveStartTime;
     float moveEndTime;
