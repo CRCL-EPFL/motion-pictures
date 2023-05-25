@@ -2,7 +2,11 @@ import cv2
 from ultralytics import YOLO
 import numpy as np
 from kf import Kalman_Filter
+from pythonosc.udp_client import SimpleUDPClient
 
+port = 7777
+ip = "127.0.0.1"
+client = SimpleUDPClient(ip, port)
 
 # RECALIBRATE WHEN FINAL WINDOW SIZE KNOWN
 DIM=(1920, 1080)
@@ -22,39 +26,53 @@ def undistort(img, map1, map2):
 model = YOLO('yolov8n.pt')
 
 # Open the video file1
-cap = cv2.VideoCapture(0)
+cap1 = cv2.VideoCapture(0)
+cap2 = cv2.VideoCapture(1)
 
 # cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
 # cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
 # Loop through the video frames
-while cap.isOpened():
+while cap1.isOpened() and cap2.isOpened():
     # Read a frame from the video
-    success, frame = cap.read()
+    success1, frame1 = cap1.read()
+    success2, frame2 = cap2.read()
 
     # Init blank frame
     blank = np.zeros((1360, 1920, 3), np.uint8)
 
-    if success:
+    if success1 and success2:
         frame = cv2.rotate(frame, cv2.ROTATE_180)
         print(frame.shape)
         # frame = undistort(frame, map1, map2)
 
         # Run YOLOv8 inference on the frame
-        results = model.track(frame, classes=0, imgsz=320, show=True, persist=True)
+        results1 = model.track(frame1, classes=0, imgsz=320, show=True, persist=True)
+        results2 = model.track(frame2, classes=0, imgsz=320, show=True, persist=True)
 
-        if  results[0].boxes.id !=  None:
-            boxes = results[0].boxes.xyxy.cpu().numpy().astype(int)
+        if  results1[0].boxes.id !=  None:
+            boxes = results1[0].boxes.xyxy.cpu().numpy().astype(int)
     
-            ids = results[0].boxes.id.cpu().numpy().astype(int)
+            ids = results1[0].boxes.id.cpu().numpy().astype(int)
             
             # get point and send via OSC
             for box, id in zip(boxes, ids):
                 # coordinates of middle
                 extrPoint = (int(box[0] + (box[2] - box[0])/2), box[3])
                 print(extrPoint)
-                cv2.circle(frame, extrPoint, 4, (255,0,0), -1)
-                
+                cv2.circle(frame1, extrPoint, 4, (255,0,0), -1)
+            
+        if  results2[0].boxes.id !=  None:
+            boxes = results2[0].boxes.xyxy.cpu().numpy().astype(int)
+    
+            ids = results2[0].boxes.id.cpu().numpy().astype(int)
+            
+            # get point and send via OSC
+            for box, id in zip(boxes, ids):
+                # coordinates of middle
+                extrPoint = (int(box[0] + (box[2] - box[0])/2), box[3])
+                print(extrPoint)
+                cv2.circle(frame2, extrPoint, 4, (255,0,0), -1)
 
 
         # results = model(frame, classes=0, imgsz=320)

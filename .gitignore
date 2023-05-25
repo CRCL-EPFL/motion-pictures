@@ -30,3 +30,6 @@ Makefile
 *.jpg
 *.png
 *.pt
+
+# Random 
+.DS_STORE
