@@ -28,7 +28,7 @@ void ofApp::update() {
         receiver.getNextMessage(m);
 
         // pre-process message into vector
-        if (m.getAddress() == "/centroids") {
+        if (m.getAddress() == "/points") {
             // length is the number of complete objects, total message length / number of parameters
             // Parameters include (in order): id, x pos, y pos, dest x, dest y
             int length = m.getNumArgs() / base;
@@ -50,42 +50,28 @@ void ofApp::update() {
                     //                    cout << "Found " << id << " x: " << tempX << endl;
                     ballMap[id].update(tempX, tempY);
                 }
-                // if not at the max size
-                else if (ballMap.size() < MAX_NUM) {
-                    Ball tempBall;
-                    ballMap.insert(make_pair(id, tempBall));
-
-                    ballMap[id].setup(id);
-                }
             }
         }
 
-        // else if (m.getAddress() == "/centroids/state"){
-        //     int id = m.getArgAsInt(0);
-        //     ballMap[id].setMoveAnimation();
-        //     ballMap[id].moving = !ballMap[id].moving;
-        // }
-        else if (m.getAddress() == "/centroids/delete") {
+        else if (m.getAddress() == "/points/create") {
+            int id = m.getArgAsInt(0)
+
+            int tempX = int(m.getArgAsFloat(1) * ofGetWidth());
+            int tempY = int(m.getArgAsFloat(2) * ofGetHeight());
+
+            Ball tempBall;
+            ballMap.insert(make_pair(id, tempBall));
+
+            ballMap[id].setup(id);
+        }
+
+        else if (m.getAddress() == "/points/delete") {
             int id = m.getArgAsInt(0);
 
             ballMap[id].setDeleteAnimation();
         }
-
-        else if (m.getAddress() == "/centroids/disappear") {
-            // TO-DO
-            // pass compass id(s), execute their delete() functions
-            // moves to separate data structure
-            for (int i = 0; i < m.getNumArgs(); i++) {
-                int id = m.getArgAsInt(i);
-
-                ballMap[id].closeDown();
-                // insert id, compass pointer pair into disappearStore
-//                disappearStore.insert(make_pair(id, &compassMap[id]));
-                disappearStore.push_back(id);
-            }
-        }
-
     }
+
     if (ballMap.size() > 0) {
         // flatten everything to be passed as uniform
         int it = 0;
@@ -95,25 +81,13 @@ void ofApp::update() {
             flatCoords[it + 1] = comp.second.y;
 
             flatHues[it] = comp.second.hue;
-            //                ++singleIt;
 
 
             flatMoveFrames[it] = comp.second.moveFrame;
             flatDisFrames[it] = comp.second.disFrame;
-            //            cout << "passing disFrame " << comp.second.disFrame << endl;
-
-            //            cout << "Flattening for " << it << endl;
 
             it += 2;
         }
-
-        //        cout << "flatCoords:" << endl;
-        //            cout << "size: " << sizeof flatCoords << endl;
-        //            cout << *flatCoords[0] << ", " << *flatCoords[0] << endl;
-        //            cout << *flatCoords[0] << endl;
-        //            cout << *(flatCoords[2]) << endl;
-
-        //        cout << "ballMap size: " << ballMap.size() << endl;
     }
 
     if (disappearStore.size() > 0) {

@@ -6,6 +6,23 @@ uniform vec2 u_res;
 uniform float u_time;
 uniform vec2 u_mouse;
 
+float roundLookingBlob(vec2 fragCoord, vec2 tPos, float r) {
+    vec2 pos = fragCoord.xy/u_res.yy - vec2(0.5);
+    pos.x -= ((u_res.x-u_res.y)/u_res.y)/2.0;
+    return pow(max(1.0-length(pos-tPos), 0.0) , r);
+}
+
+void main()
+{
+	float v = roundLookingBlob(gl_FragCoord,vec2(sin(u_time)*0.4, cos(u_time)*0.4), 7.0);
+    v += roundLookingBlob(gl_FragCoord,vec2(sin(u_time*0.6)*0.2, cos(u_time)*0.3), 6.0);
+    v += roundLookingBlob(gl_FragCoord,vec2(cos(u_time*0.8)*0.7, sin(u_time*1.1)*0.4), 5.0);
+    //v += roundLookingBlob(fragCoord,vec2(cos(u_time*0.2)*0.2, sin(u_time*0.9)*0.5), 8.0);
+    v += roundLookingBlob(gl_FragCoord,vec2(u_mouse.x/u_res.x, u_mouse.y/u_res.y), 8.0);
+    v = clamp((v-0.5)*1000.0, 0.0, 1.0);
+	fragColor = vec4(v, v, v, 1.0);
+}
+
 #define S(a,b,t) smoothstep(a,b,t)
 
 mat2 Rot(float a)
@@ -104,7 +121,7 @@ vec3 maskEdge( vec2 uv ) {
     return 1.-vec3(pct);
 }
 
-void main() {
-    vec2 uv = gl_FragCoord.xy;
-    fragColor = vec4(genBack(uv)*maskEdge(uv), 1.);
-}
+// void main() {
+//     vec2 uv = gl_FragCoord.xy;
+//     fragColor = vec4(genBack(uv)*maskEdge(uv), 1.);
+// }
