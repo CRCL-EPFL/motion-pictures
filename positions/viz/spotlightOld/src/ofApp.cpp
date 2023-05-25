@@ -115,11 +115,6 @@ void ofApp::update(){
 
                     cout << ofGetElapsedTimef() << ": Received dir for " << id << " to " << direction << endl;
                 }
-
-                // OLD SINGLE RECEIVER
-                // int id = m.getArgAsInt(0);
-
-                // haloMap[id].setDirAnimation(m.getArgAsFloat(1));
             }
         }
         

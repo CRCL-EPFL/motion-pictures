@@ -30,7 +30,7 @@ while cap.isOpened():
     success, frame = cap.read()
 
     if success:
-        frame = cv2.rotate(frame, cv2.ROTATE_180)
+        # frame = cv2.rotate(frame, cv2.ROTATE_180)
         # frame = undistort(frame, map1, map2)
         
         # Run YOLOv8 inference on the frame

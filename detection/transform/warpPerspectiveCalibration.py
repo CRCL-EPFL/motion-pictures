@@ -1,10 +1,12 @@
 import cv2 as cv
 import numpy as np
 
+# View untransformed image and select corner points
+
 # FISHEYE CORRECTION
-DIM=(1920, 1080)
-K=np.array([[1072.2416669079864, 0.0, 974.1246550909606], [0.0, 1071.6376728723455, 524.0909070617798], [0.0, 0.0, 1.0]])
-D=np.array([[-0.01680471181040181], [-0.04507194951348153], [0.10890126839017801], [-0.0804898674047556]])
+DIM=(1280, 720)
+K=np.array([[715.0845213313972, 0.0, 649.466032885757], [0.0, 714.7508174031162, 349.07092982998165], [0.0, 0.0, 1.0]])
+D=np.array([[-0.018535944017385605], [-0.036164616733474465], [0.0996012486725898], [-0.08137886264463776]])
 
 # store map results
 map1, map2 = cv.fisheye.initUndistortRectifyMap(K, D, np.eye(3), K, DIM, cv.CV_16SC2)
@@ -17,14 +19,15 @@ def undistort(img, map1, map2):
 # img = cv.imread('')
 video = cv.VideoCapture(0)
 
-video.set(cv.CAP_PROP_FRAME_WIDTH, 1920)
-video.set(cv.CAP_PROP_FRAME_HEIGHT, 1080)
+# video.set(cv.CAP_PROP_FRAME_WIDTH, 1920)
+# video.set(cv.CAP_PROP_FRAME_HEIGHT, 1080)
 
 input_points = []
 
 width = 1920
 # 16:9 aspect ratio of 1920 x 1080 to match projector
-height = int(width*.9)
+height = int(width*.979)
+# height = int(width*.9)
 
 convertedPoints= np.float32([[0, 0], [width, 0], [0, height], [width, height]])
 
@@ -60,7 +63,7 @@ while True:
 
     cv.imshow('original', frame)
     
-    cv.setMouseCallback('original', onMouse)
+    cv.setMouseCallback('original', onMouse)                                               
 
     key = cv.waitKey(1) & 0xFF
 

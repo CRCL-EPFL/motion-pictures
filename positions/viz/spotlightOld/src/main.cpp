@@ -7,11 +7,11 @@ int main( ){
     ofGLESWindowSettings settings;
     settings.glesVersion=2;
 #else
-    ofGLWindowSettings settings;
+    ofGLFWWindowSettings settings;
     settings.setGLVersion(3,2);
 	settings.windowMode = OF_FULLSCREEN;
-    settings.setSize(1920, 1200);
-    // settings.setSize(1200, 900);
+    settings.multiMonitorFullScreen = true;
+    settings.setSize(1920, 2160);
 #endif
     ofCreateWindow(settings);
     

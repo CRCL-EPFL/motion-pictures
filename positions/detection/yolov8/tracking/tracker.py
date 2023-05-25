@@ -2,88 +2,81 @@ from scipy.spatial import distance as dist
 from collections import OrderedDict
 import numpy as np
 from .kf import Kalman_Filter
-# import kf
+from pythonosc.udp_client import SimpleUDPClient
+
+# Works on top of YOLO tracker to track disappeared frames and further filter point locations
+# Also send messages via OSC
+# Eventually calculate distances between camera points?
 
 class Tracker():
-    def __init__(self):
+    def __init__(self, size):
+        # Track frames disappeared
+        self.objects = OrderedDict()
+        self.disappeared = OrderedDict()
+        self.maxDisappeared = 30
+
+        # Holds KFs for each tracker
         self.filters = OrderedDict()
+
+        self.width = size[0]
+        self.height = size[1]
+
+        port = 7777
+        ip = "127.0.0.1"
+        self.client = SimpleUDPClient(ip, port)
     
-    def register(self, trackPoint):
-        self.filters[self.nextObjectID] = Kalman_Filter()
-        self.filters[self.nextObjectID].initialize(trackPoint)
-        self.filters[self.nextObjectID].predict(np.array([[np.float32(trackPoint[0])],[np.float32(trackPoint[1])]]))
+    def register(self, id, point):
+        self.objects[id] = point
 
-    def deregister(self, objectID):
-        del self.filters[objectID]
+        self.disappeared[id] = 0
 
-    def update(self, rects):
-        if len(rects) == 0:
-            for objectID in list(self.disappeared.keys()):
-                self.disappeared[objectID] += 1
+        self.filters[id] = Kalman_Filter()
+        self.filters[id].initialize(point)
+        self.filters[id].predict(np.array([[np.float32(point[0])],[np.float32(point[1])]]))
 
-                if self.disappeared[objectID] > self.maxDisappeared:
-                    self.deregister(objectID)
+    def deregister(self, id):
+        del self.objects[id]
+        del self.disappeared[id]
+        del self.filters[id]
 
-            return self.objects
+    def update(self, incomingIds, incomingPoints):
+        # Message to be sent with ids and points
+        message = None
 
-        inputCentroids = np.zeros((len(rects), 2), dtype="int")
+        # Compare existing to incoming to see if there are any missing
+        for id in list(self.objects.keys()):
+            # For each registered object, check if incoming ids match
+            if id not in incomingIds:
+                self.disappeared[id] += 1
 
-        for (i, (startX, startY, endX, endY)) in enumerate(rects):
-            cX = int((startX + endX)/2.0)
-            cY = int((startY + endY)/2.0)
-            inputCentroids[i] = (cX, cY)
+                if self.disappeared[id] > self.maxDisappeared:
+                    self.deregister(id)
+                    self.client.send_message("/points/delete", id)
 
-        if len(self.objects) == 0:
-            for i in range(0, len(inputCentroids)):
-                self.register(inputCentroids[i])
-        
-        else:
-            objectIDs = list(self.objects.keys())
-            objectCentroids = list(self.objects.values())
+        # Compare incoming to existing to see if any new objects
+        for i, incoming in enumerate(incomingIds):
+            if incoming not in list(self.objects.keys()):
+                self.register(incoming, incomingPoints[i])
+                # Send message for this?
+                self.client.send_message("/points/create", np.array([id, incomingPoints[0][0], incomingPoints[0][1]]))
 
-            D = dist.cdist(np.array(objectCentroids), inputCentroids)
+            else:
+                # Format point for K filter
+                kInput = np.array([[np.float32(incomingPoints[i][0])], [np.float32(incomingPoints[i][1])]])
+                kResult = self.filters[incoming].predict(kInput)
 
-            rows = D.min(axis=1).argsort()
+                 # Update object points with smoothed point
+                self.objects[incoming] = kResult
+                self.disappeared[incoming] = 0
 
-            cols = D.argmin(axis=1)[rows]
+                # Construct or append to message
+                if message is None:
+                    # Static direction for now
+                    message = np.array([incoming, incomingPoints[i][0] / self.width, incomingPoints[i][1] / self.height, 0])
+                else:
+                    message = np.append(message, [incoming, incomingPoints[i][0] / self.width, incomingPoints[i][1] / self.height, 0])
 
-            usedRows = set()
-            usedCols = set()
+        self.client.send_message("/points", message)
 
-            for (row, col) in zip(rows, cols):
-                if row in usedRows or col in usedCols:
-                    continue
-
-                objectID = objectIDs[row]
-
-                # format coordinate for K filter
-                coord = np.array([[np.float32(inputCentroids[col][0])],[np.float32(inputCentroids[col][1])]])
-                # print("Input centroid " + str(objectID) + ": " + str(coord))
-                
-                # access specific filter for the objectID and predict
-                result = self.filters[objectID].predict(coord)
-
-                returnCentroid = np.array([int(result[0][0]), int(result[1][0])])
-
-                self.objects[objectID] = returnCentroid
-                self.disappeared[objectID] = 0
-
-                usedRows.add(row)
-                usedCols.add(col)
-
-            unusedRows = set(range(0, D.shape[0])).difference(usedRows)
-            unusedCols = set(range(0, D.shape[1])).difference(usedCols)
-
-            if D.shape[0] >= D.shape[1]:
-                for row in unusedRows:
-                    objectID = objectIDs[row]
-                    self.disappeared[objectID] += 1
-
-                    if self.disappeared[objectID] > self.maxDisappeared:
-                        self.deregister(objectID)
-
-            else: 
-                for col in unusedCols:
-                    self.register(inputCentroids[col])
-            
+        # Check what's being returned
         return self.objects
