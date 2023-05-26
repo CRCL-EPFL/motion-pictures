@@ -18,17 +18,22 @@ class Kalman_Filter:
 
         # Q - higher means more adaptable to quick variations but smaller means variations attributed to noise
         # Saved: 1e-8, 1e-11
+        # q = 1e-12
         q = 1e-12
         kalman.processNoiseCov = np.array([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]], np.float32) * q
 
         # R - relative to Q, higher is more filtered
         # Saved: 5e-6, 5e-8
         r = 1e-10
+        # r = 5e-6
         kalman.measurementNoiseCov = np.array([[1,0],[0,1]], np.float32) * r
 
 
     def predict(self, point):
-        #Correction Step
+        # Don't necessarily need to save to var
+        tp = self.kalman.predict()
+
+        #Correction Ste
         mp = self.kalman.correct(point)
 
         return mp

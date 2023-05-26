@@ -35,6 +35,8 @@ inputPoints = np.float32([[410, 282],[716, 243],[481, 596],[889, 488]])
 convertedPoints= np.float32([[0, 0], [w, 0], [0, h], [w, h]])
 matrix = cv2.getPerspectiveTransform(inputPoints, convertedPoints)
 
+track = Tracker((w, h))
+
 # Loop through the video frames
 while cap1.isOpened():
     # Read a frame from the video
@@ -43,7 +45,7 @@ while cap1.isOpened():
     # Init blank frame
     blank = np.zeros((h, w, 3), np.uint8)
 
-    track = Tracker((w, h))
+    # track = Tracker((w, h))
     points1 = []
 
     if success1:
@@ -58,30 +60,37 @@ while cap1.isOpened():
             print("In results")
             boxes = results1[0].boxes.xyxy.cpu().numpy().astype(int)
             ids = results1[0].boxes.id.cpu().numpy().astype(int)
+            # print(ids)
             
             for box, id in zip(boxes, ids):
                 # Get coordinates of middle
                 point = (int(box[0] + (box[2] - box[0])/2), box[3])
-                points1.append(point)
+                # points1.append(point)
 
                 transPoint = cv2.perspectiveTransform(np.float32(np.array([[[point[0], point[1]]]])), matrix)[0][0]
                 # Add transformed points to the array for tracker
-                # points1.append(transPoint)
+                points1.append((int(transPoint[0]), int(transPoint[1])))
+
+                # print(transPoint)
 
                 # Annotate frame
                 cv2.circle(frame1, point, 4, (255,0,0), -1)
+                # cv2.circle(blank, (int(transPoint[0]), int(transPoint[1])), 4, (0,0,255), -1)
                 cv2.rectangle(frame1, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
 
             objects = track.update(ids, points1)
 
-            # TO FIX: See smoothed points
-            # for (objectID, centroid) in objects.items():
-            
+            for (id, point) in objects.items():
+                # cv2.circle(frame1, centroid, 4, (0,0,255), -1)
+                formatPoint = (int(point[0] * w), int(point[1] * h))
+                print("POINT to draw: " + str(formatPoint))
+                cv2.circle(blank, formatPoint, 8, (0,0,255), -1)
             # for object in objects:
             #     cv2.circle(frame1, object.values(), 4, (0,0,255), -1)
 
         # Display the annotated frame
         cv2.imshow("annotate1", frame1)
+        cv2.imshow("blank1", blank)
 
         # Break the loop if 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord("q"):

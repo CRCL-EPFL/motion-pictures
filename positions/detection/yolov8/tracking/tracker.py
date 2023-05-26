@@ -28,6 +28,8 @@ class Tracker():
     def register(self, id, point):
         self.objects[id] = point
 
+        print("In register for id: " + str(id))
+        print("In register object point: " + str(self.objects[id]))
         self.disappeared[id] = 0
 
         self.filters[id] = Kalman_Filter()
@@ -51,30 +53,39 @@ class Tracker():
 
                 if self.disappeared[id] > self.maxDisappeared:
                     self.deregister(id)
-                    self.client.send_message("/points/delete", id)
+                    print(type(id))
+                    self.client.send_message("/points/delete", int(id))
 
         # Compare incoming to existing to see if any new objects
+        print(list(self.objects.keys()))
+        print(len(self.objects))
         for i, incoming in enumerate(incomingIds):
             if incoming not in list(self.objects.keys()):
                 self.register(incoming, incomingPoints[i])
+
                 # Send message for this?
-                self.client.send_message("/points/create", np.array([id, incomingPoints[0][0], incomingPoints[0][1]]))
+                self.client.send_message("/points/create", [int(incoming), int(incomingPoints[i][0]), int(incomingPoints[i][1])])
 
             else:
+                print("TRACKER UPDATE")
                 # Format point for K filter
                 kInput = np.array([[np.float32(incomingPoints[i][0])], [np.float32(incomingPoints[i][1])]])
                 kResult = self.filters[incoming].predict(kInput)
+                kFormat = (kResult[0][0] / self.width, kResult[1][0] / self.height)
 
                  # Update object points with smoothed point
-                self.objects[incoming] = kResult
+                self.objects[incoming] = kFormat
                 self.disappeared[incoming] = 0
+
+                sendPoint = [incomingPoints[i][0] / self.width, incomingPoints[i][1] / self.height]
+                sendPoint = [kFormat[0], kFormat[1]]
 
                 # Construct or append to message
                 if message is None:
                     # Static direction for now
-                    message = np.array([incoming, incomingPoints[i][0] / self.width, incomingPoints[i][1] / self.height, 0])
+                    message = np.array([incoming, sendPoint[0], sendPoint[1], 0])
                 else:
-                    message = np.append(message, [incoming, incomingPoints[i][0] / self.width, incomingPoints[i][1] / self.height, 0])
+                    message = np.append(message, [incoming, sendPoint[0], sendPoint[1], 0])
 
         self.client.send_message("/points", message)
 

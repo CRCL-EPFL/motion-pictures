@@ -79,7 +79,7 @@ void ofApp::draw() {
 		botBlend.end();
 
 		fboBot.end();
-
+		q
 		// draw top and bottom FBO to screen
 		fboTop.draw(0, 0);
 		fboBot.draw(0, 1200);

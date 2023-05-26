@@ -43,7 +43,7 @@ void ofApp::update() {
                 int tempX = int(m.getArgAsFloat(baseInd + 1) * ofGetWidth());
                 int tempY = int(m.getArgAsFloat(baseInd + 2) * ofGetHeight());
 
-                //                cout << "x: " << tempX << ", y: " << tempY << endl;
+                cout << "x: " << tempX << ", y: " << tempY << endl;
 
                                 // for later use, move message info into messageStores
                 if (ballMap.find(id) != ballMap.end()) {
@@ -54,7 +54,7 @@ void ofApp::update() {
         }
 
         else if (m.getAddress() == "/points/create") {
-            int id = m.getArgAsInt(0)
+            int id = m.getArgAsInt(0);
 
             int tempX = int(m.getArgAsFloat(1) * ofGetWidth());
             int tempY = int(m.getArgAsFloat(2) * ofGetHeight());
@@ -102,14 +102,26 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
+    float flatTest[20]{};
+    /*flatTest[0] = sin(ofGetElapsedTimef()*.4);
+    flatTest[1] = cos(ofGetElapsedTimef() * .4);*/
+    flatTest[0] = mouseX;
+    flatTest[1] = mouseY;
+    
+    //std:cout << flatTest[0] << " " << flatTest[1] << endl;
+
     shader.begin();
 
     shader.setUniform1f("u_time", ofGetElapsedTimef());
     shader.setUniform2f("u_res", ofGetWidth(), ofGetHeight());
     shader.setUniform2f("u_mouse", mouseX, mouseY);
+    shader.setUniform1i("num", ballMap.size());
+    shader.setUniform1fv("pos", &flatCoords[0], ballMap.size() * 2);
+    /*shader.setUniform1i("num", 1);
+    shader.setUniform1fv("pos", &flatTest[0], 2);*/
 
     ofColor(0);
-    ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
+    ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());    
     
     shader.end();
 	

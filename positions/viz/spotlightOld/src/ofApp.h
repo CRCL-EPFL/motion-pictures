@@ -36,10 +36,6 @@ class ofApp : public ofBaseApp{
     float flatHues[20];
     float flatDirections[20];
     float flatData[60];
-    int flatPriorities[20];
-//    vector <vector <float>> flatCoords;
-//    vector <float> flatDirections;
-//    vector <float> flatHues;
     
     // flattened move frames
     float flatMoveFrames[20];

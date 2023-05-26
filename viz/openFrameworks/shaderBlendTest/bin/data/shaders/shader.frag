@@ -91,8 +91,8 @@ void main()
         vec2 bpos = vec2(perlinNoise(vec2(float(i*3218) + cos(u_time*0.1), u_time*0.1)), perlinNoise(vec2(float(i*1357) + sin(u_time*0.1), -u_time*0.1))) / 5.0;
         bpos += vec2(0.5 * u_res.x/u_res.y,0.5);
         dist += hsv2rgb(vec3(float(i) / float(BALLS), 1.0, 1.0)) * 1.0 / (pow(position.x - bpos.x, 2.0) + pow(position.y - bpos.y, 2.0));
-        //        distBot += hsv2rgb(vec3(float(i) / float(BALLS), 1.0, 1.0)) * 1.0 / (pow(position.x - bpos.x, 2.0) + pow(position.y + u_overlap/u_res.y - bpos.y, 2.0));
-        distBot += hsv2rgb(vec3(float(i) / float(BALLS), 1.0, 1.0)) * 1.0 / (pow(position.x - bpos.x, 2.0) + pow(position.y - bpos.y, 2.0));
+        distBot += hsv2rgb(vec3(float(i) / float(BALLS), 1.0, 1.0)) * 1.0 / (pow(position.x - bpos.x, 2.0) + pow(position.y + u_overlap/u_res.y - bpos.y, 2.0));
+//        distBot += hsv2rgb(vec3(float(i) / float(BALLS), 1.0, 1.0)) * 1.0 / (pow(position.x - bpos.x, 2.0) + pow(position.y - bpos.y, 2.0));
     }
 
     //dist = clamp(dist, 0., 2.);
