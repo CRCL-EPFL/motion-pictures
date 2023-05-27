@@ -5,6 +5,7 @@ uniform int overlap;
 uniform int blendExp;
 uniform float gamma;
 uniform vec2 u_res;
+uniform float a;
 
 in vec2 texCoordVarying;
 out vec4 outputColor;
@@ -14,7 +15,7 @@ float map(float value, float min1, float max1, float min2, float max2) {
 }
 
 float blend(float x) {
-	return clamp(.5 * pow(2*x, blendExp), 0., 1.);
+	return clamp(a * pow(2*x, blendExp), 0., 1.);
 }
 
 void main() {
@@ -27,7 +28,8 @@ void main() {
 
 	// load in texture
 	vec4 texel0 = texture(tex0, texCoordVarying);
-	//vec4 texel0 = vec4(0.2, 0.6, 0., 1.);
+//	vec4 texel0 = vec4(1., 0., 0., 1.);
+//	vec4 texel0 = vec4(0., 0., 1., 1.);
 
 	// make vec3 to store masked texture
 	vec3 base = texel0.rgb * mask;

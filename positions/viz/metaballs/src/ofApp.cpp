@@ -105,8 +105,8 @@ void ofApp::draw() {
     float flatTest[20]{};
     /*flatTest[0] = sin(ofGetElapsedTimef()*.4);
     flatTest[1] = cos(ofGetElapsedTimef() * .4);*/
-    flatTest[0] = mouseX;
-    flatTest[1] = mouseY;
+    /*flatTest[0] = mouseX;
+    flatTest[1] = mouseY;*/
     
     //std:cout << flatTest[0] << " " << flatTest[1] << endl;
 
@@ -117,8 +117,9 @@ void ofApp::draw() {
     shader.setUniform2f("u_mouse", mouseX, mouseY);
     shader.setUniform1i("num", ballMap.size());
     shader.setUniform1fv("pos", &flatCoords[0], ballMap.size() * 2);
-    /*shader.setUniform1i("num", 1);
-    shader.setUniform1fv("pos", &flatTest[0], 2);*/
+    //shader.setUniform1i("num", 1);
+    //// Pass in address of array start
+    //shader.setUniform1fv("pos", &flatTest[0], 2);
 
     ofColor(0);
     ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());    

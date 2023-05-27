@@ -95,7 +95,7 @@ void main()
 //        distBot += hsv2rgb(vec3(float(i) / float(BALLS), 1.0, 1.0)) * 1.0 / (pow(position.x - bpos.x, 2.0) + pow(position.y - bpos.y, 2.0));
     }
 
-    //dist = clamp(dist, 0., 2.);
+//    dist = map(dist, 0., 200., 0., 1.);
     
     float halfway = u_res.y/2.;
     
@@ -140,9 +140,10 @@ void main()
     
     //fragColor = top + bot;
 //    fragColor = vec4(colorBot, 1.);
-    fragColor = grainyCombine;
+//    fragColor = grainyCombine;
 //    fragColor = vec4(base, 1.);
 //    fragColor = vec4(color+colorBot, 1.);
 //    fragColor = vec4(mask, mask, mask, 1.);
+    fragColor = vec4(vec3(mask+maskBot), 1.);
 //    fragColor = vec4(maskBot, maskBot, maskBot, 1.);
 }

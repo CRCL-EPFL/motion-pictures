@@ -24,6 +24,7 @@ public:
 
 	ofParameterGroup parameters;
 	ofParameter<float> gamma;
+	ofParameter<float> a;
 	ofParameter<int> blendExp;
 	ofParameter<int> overlap;
 	ofParameter<int> trueOverlap;

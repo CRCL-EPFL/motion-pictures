@@ -81,11 +81,12 @@ class Tracker():
                 sendPoint = [kFormat[0], kFormat[1]]
 
                 # Construct or append to message
-                if message is None:
+                if message is None and sendPoint[0] < self.width and sendPoint[1] < self.height:
                     # Static direction for now
                     message = np.array([incoming, sendPoint[0], sendPoint[1], 0])
                 else:
-                    message = np.append(message, [incoming, sendPoint[0], sendPoint[1], 0])
+                    if sendPoint[0] < self.width and sendPoint[1] < self.height:
+                        message = np.append(message, [incoming, sendPoint[0], sendPoint[1], 0])
 
         self.client.send_message("/points", message)
 

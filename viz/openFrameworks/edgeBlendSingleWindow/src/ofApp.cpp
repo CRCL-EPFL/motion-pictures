@@ -24,7 +24,8 @@ void ofApp::setup() {
 	fboBot.allocate(1920, 1200);
 
 	parameters.setName("Calibration");
-	parameters.add(gamma.set("Gamma", 2.0, 1.0, 3.0));
+	parameters.add(gamma.set("Gamma", 2.0, 1.0, 5.0));
+	parameters.add(a.set("Multiplier", .5, 0., 1.0));
 	parameters.add(blendExp.set("Blend Power", 2, 1, 3));
 	parameters.add(trueOverlap.set("True Overlap", 807, 800, 900));
 	parameters.add(overlap.set("Overlap", 120, 60, 720));
@@ -50,12 +51,12 @@ void ofApp::draw() {
 		topBlend.setUniform1i("overlap", overlap);
 		topBlend.setUniform1i("blendExp", blendExp);
 		topBlend.setUniform1f("gamma", gamma);
-		//ofSetColor(0);
-		//ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
+		botBlend.setUniform1f("a", a);
+
+		ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
 
 		// need this or a drawn geometry for anything to show
-		imgTop.draw(0, 0);
-
+		//imgTop.draw(0, 0);
 		topBlend.end();
 
 		fboTop.end();
@@ -72,14 +73,17 @@ void ofApp::draw() {
 		botBlend.setUniform1i("overlap", overlap);
 		botBlend.setUniform1i("blendExp", blendExp);
 		botBlend.setUniform1f("gamma", gamma);
+		botBlend.setUniform1f("a", a);
+
+		ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
 
 		// need this or a drawn geometry for anything to show
-		temp.draw(0, 0);
+		/*temp.draw(0, 0);*/
 
 		botBlend.end();
 
 		fboBot.end();
-		q
+
 		// draw top and bottom FBO to screen
 		fboTop.draw(0, 0);
 		fboBot.draw(0, 1200);

@@ -57,7 +57,6 @@ while cap1.isOpened():
         results1 = model.track(frame1, classes=0, tracker="botsort.yaml", imgsz=320, persist=True)
 
         if results1[0].boxes.id != None:
-            print("In results")
             boxes = results1[0].boxes.xyxy.cpu().numpy().astype(int)
             ids = results1[0].boxes.id.cpu().numpy().astype(int)
             # print(ids)
