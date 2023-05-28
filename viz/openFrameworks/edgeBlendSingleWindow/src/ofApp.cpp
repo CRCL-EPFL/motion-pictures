@@ -25,10 +25,10 @@ void ofApp::setup() {
 
 	parameters.setName("Calibration");
 	parameters.add(gamma.set("Gamma", 2.0, 1.0, 5.0));
-	parameters.add(a.set("Multiplier", .5, 0., 1.0));
+	parameters.add(a.set("Multiplier", .765, 0., 1.0));
 	parameters.add(blendExp.set("Blend Power", 2, 1, 3));
 	parameters.add(trueOverlap.set("True Overlap", 807, 800, 900));
-	parameters.add(overlap.set("Overlap", 120, 60, 720));
+	parameters.add(overlap.set("Overlap", 600, 60, 900));
 	parameters.add(calib.set("Mode", true));
 	gui.setup(parameters);
 }

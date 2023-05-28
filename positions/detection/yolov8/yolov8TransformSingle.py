@@ -28,10 +28,11 @@ cap1 = cv2.VideoCapture(0)
 
 # Width and height of projection area in pixels
 w = 1920
-h = 1880
+# h = 1880
+h = 1920
 
 # Corner points to be perspective transformed
-inputPoints = np.float32([[410, 282],[716, 243],[481, 596],[889, 488]])
+inputPoints = np.float32([[187, 318],[522, 223],[355, 644],[740, 427]])
 convertedPoints= np.float32([[0, 0], [w, 0], [0, h], [w, h]])
 matrix = cv2.getPerspectiveTransform(inputPoints, convertedPoints)
 
@@ -64,7 +65,6 @@ while cap1.isOpened():
             for box, id in zip(boxes, ids):
                 # Get coordinates of middle
                 point = (int(box[0] + (box[2] - box[0])/2), box[3])
-                # points1.append(point)
 
                 transPoint = cv2.perspectiveTransform(np.float32(np.array([[[point[0], point[1]]]])), matrix)[0][0]
                 # Add transformed points to the array for tracker
@@ -89,7 +89,7 @@ while cap1.isOpened():
 
         # Display the annotated frame
         cv2.imshow("annotate1", frame1)
-        cv2.imshow("blank1", blank)
+        # cv2.imshow("blank1", blank)
 
         # Break the loop if 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord("q"):

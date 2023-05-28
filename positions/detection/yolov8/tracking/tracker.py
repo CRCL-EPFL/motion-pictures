@@ -50,11 +50,12 @@ class Tracker():
             # For each registered object, check if incoming ids match
             if id not in incomingIds:
                 self.disappeared[id] += 1
+                # self.client.send_message("/points/disappear", int(id))
 
                 if self.disappeared[id] > self.maxDisappeared:
                     self.deregister(id)
                     print(type(id))
-                    self.client.send_message("/points/delete", int(id))
+                    # self.client.send_message("/points/delete", int(id))
 
         # Compare incoming to existing to see if any new objects
         print(list(self.objects.keys()))
@@ -85,8 +86,10 @@ class Tracker():
                     # Static direction for now
                     message = np.array([incoming, sendPoint[0], sendPoint[1], 0])
                 else:
-                    if sendPoint[0] < self.width and sendPoint[1] < self.height:
+                    if sendPoint[0] < 1 and sendPoint[1] < 1:
+                    # if sendPoint[0] < self.width and sendPoint[1] < self.height:
                         message = np.append(message, [incoming, sendPoint[0], sendPoint[1], 0])
+                        print("Send points: " + str(sendPoint[0]) + ", " + str(sendPoint[1]))
 
         self.client.send_message("/points", message)
 

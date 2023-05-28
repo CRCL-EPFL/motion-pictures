@@ -8,6 +8,8 @@ void ofApp::setup() {
 	int width = 1920;
 	int height = 1200;
 
+    ofHideCursor();
+
 	shader.load("shaders/shader");
 
 	// GUI
@@ -102,9 +104,8 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
+
     float flatTest[20]{};
-    /*flatTest[0] = sin(ofGetElapsedTimef()*.4);
-    flatTest[1] = cos(ofGetElapsedTimef() * .4);*/
     /*flatTest[0] = mouseX;
     flatTest[1] = mouseY;*/
     
@@ -120,7 +121,6 @@ void ofApp::draw() {
     //shader.setUniform1i("num", 1);
     //// Pass in address of array start
     //shader.setUniform1fv("pos", &flatTest[0], 2);
-
     ofColor(0);
     ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());    
     

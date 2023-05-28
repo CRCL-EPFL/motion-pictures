@@ -25,8 +25,10 @@ void main() {
 	mask = blend(mask);
 
     // load in texture
-	vec4 texel0 = texture(tex0, texCoordVarying);
+//	vec4 texel0 = texture(tex0, texCoordVarying);
 //	vec4 texel0 = vec4(0., 0., 1., 1.);
+	vec4 texel0 = vec4(0., 0., 0., 1.);
+//	vec4 texel0 = vec4(0.3, 0.3, 0.3, 1.);
 
 	vec3 base = texel0.rgb * mask;
 	vec3 correct = vec3(pow(base.r, 1./gamma), pow(base.g, 1./gamma), pow(base.b, 1./gamma));

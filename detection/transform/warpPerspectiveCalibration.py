@@ -22,7 +22,9 @@ video = cv.VideoCapture(0)
 # video.set(cv.CAP_PROP_FRAME_WIDTH, 1920)
 # video.set(cv.CAP_PROP_FRAME_HEIGHT, 1080)
 
-input_points = []
+# input_points = []
+input_points = np.float32([[187, 318],[522, 223],[355, 644],[740, 427]])
+
 
 width = 1920
 # 16:9 aspect ratio of 1920 x 1080 to match projector

@@ -11,7 +11,7 @@ uniform vec2 u_mouse;
 uniform float pos[10];
 uniform int num;
 
-const int OVERLAP = 770;
+const int OVERLAP = 660;
 const float GAMMA = 1.8;
 
 float map(float value, float min1, float max1, float min2, float max2) {
@@ -39,6 +39,8 @@ void main() {
 //    float v = ballM(gl_FragCoord.xy, vec2(posRel.x, posRel.y), 8.);
 //    v = clamp((v-0.5)*1000.0, 0.0, 1.0);
 //	fragColor = vec4(v, v, v, 1.0);
+
+    vec3 back = vec3(.3, .3, .3);
 
     // Normalized pixel coordinates (from 0 to 1)
     vec2 position = gl_FragCoord.xy/u_res.xy;
@@ -71,7 +73,7 @@ void main() {
     // get mask values
     maskBot = blend(maskBot);
 
-    v = clamp((v-0.5)*1000.0, 0.0, 1.0);
+    v = clamp((v-0.5)*1000.0, 0.0, 1.0); 
     vBot = clamp((vBot-0.5)*1000.0, 0.0, 1.0);
 
     // make vec3 to store masked texture
@@ -89,11 +91,15 @@ void main() {
     baseBot = baseBot * maskBot;
     // vec3 to store gamma corrected mask
     vec3 correctBot = vec3(pow(baseBot.r, 1./GAMMA), pow(baseBot.g, 1./GAMMA), pow(baseBot.b, 1./GAMMA));
+
+    back = back*(mask+maskBot);
+    back = vec3(pow(back.r, 1./(GAMMA+.4)), pow(back.g, 1./(GAMMA+.4)), pow(back.b, 1./(GAMMA+.4)));
     
     // mix between masked texture and gamma corrected based on mask value
     vec3 color = mix(correct, base, mask);
     vec3 colorBot = mix(correctBot, baseBot, maskBot);
 
+//    vec4 grainyCombine = vec4(color + colorBot + back, 1.) + grain*.4;
     vec4 grainyCombine = vec4(color + colorBot, 1.) + grain*.4;
 
 //	float v = ball(gl_FragCoord.xy, vec2(sin(u_time)*0.4, cos(u_time)*0.4), 7.0);
