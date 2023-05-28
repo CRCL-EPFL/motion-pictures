@@ -233,8 +233,10 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     float flatTest[20]{};
+    float moveTest[20]{};
     flatTest[0] = mouseX;
     flatTest[1] = mouseY;
+    moveTest[0] = 1;
 
     shader.begin();
 //    cout << ofGetElapsedTimef() << endl;
@@ -251,6 +253,7 @@ void ofApp::draw(){
 
     shader.setUniform1i("num", 1);
     // Pass in address of array start
+    shader.setUniform1fv("moveFrame", &moveTest[0], 2);
     shader.setUniform1fv("pos", &flatTest[0], 2);
 
     shader.setUniform1f("occupied", occupiedFrame);
