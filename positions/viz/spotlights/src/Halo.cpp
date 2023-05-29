@@ -13,9 +13,11 @@ Halo::Halo(){
 
 void Halo::setup(int _id, float _hue){
 //    hue = ofRandomf();
+    cout << "SET UP HALO" << endl;
     hue = _hue;
     
-    moving = true;
+    moving = false;
+    //moving = true;
     
     key = _id;
     
@@ -57,9 +59,12 @@ void Halo::draw(){
     segment.draw();
 }
 
-void Halo::updateLocation(float _x, float _y){
+void Halo::updateLocation(float _x, float _y, float _dir){
     x = _x;
     y = _y;
+
+    destAngle = _dir;
+    //cout << "Direction in Halo fx: " << destAngle << endl;
     
     // Update polyline circle center
     // Clear points first
@@ -71,26 +76,29 @@ void Halo::updateLocation(float _x, float _y){
 void Halo::update(){
     float time = ofGetElapsedTimef();
     
-    /*if (!startDelete){
+    if (!startDelete){
         disFrame = ofxeasing::map_clamp(time, fadeStartTime, fadeEndTime, 1., 0., &ofxeasing::cubic::easeOut);
-    }*/
-    disFrame = 0;
+    }
+    //disFrame = 0;
     
     // set animation frames
     if (moving){
+        //cout << "Start frames" << endl;
         moveFrame = ofxeasing::map_clamp(time, moveStartTime, moveEndTime, 0, 1, &ofxeasing::cubic::easeOut);
     } else if (!moving){
+        //cout << "Stop frames" << endl;
         moveFrame = ofxeasing::map_clamp(time, moveStartTime, moveEndTime, 1, 0, &ofxeasing::cubic::easeOut);
     }
     
-    destAngle = ofxeasing::map_clamp(time, dirStartTime, dirEndTime, dirStartVal, dirEndVal, &ofxeasing::quart::easeOut);
-    
-    // wrap angle back
-    if (destAngle > M_PI){
-        destAngle = destAngle - 2*M_PI;
-    } else if (destAngle < -M_PI){
-        destAngle = destAngle + 2*M_PI;
-    }
+    // Animated destination angle change
+    //destAngle = ofxeasing::map_clamp(time, dirStartTime, dirEndTime, dirStartVal, dirEndVal, &ofxeasing::quart::easeOut);
+    //
+    //// wrap angle back
+    //if (destAngle > M_PI){
+    //    destAngle = destAngle - 2*M_PI;
+    //} else if (destAngle < -M_PI){
+    //    destAngle = destAngle + 2*M_PI;
+    //}
     
     // Update ray direction
     ray.setup(glm::vec2(x, y), glm::vec2(cos(destAngle), sin(destAngle)));
@@ -119,6 +127,8 @@ void Halo::closeDown(){
 void Halo::setMoveAnimation(){
     moveStartTime = ofGetElapsedTimef();
     moveEndTime = moveStartTime + .5;
+    moving = !moving;
+    cout << "SETTING MOVE " << endl;
 }
 
 void Halo::setDirAnimation(float dir){

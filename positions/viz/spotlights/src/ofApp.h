@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxOsc.h"
 #include "Halo.h"
+#include "ofxGui.h"
 #include "ofxRaycaster.h"
 
 #define PORT 7777
@@ -50,6 +51,13 @@ class ofApp : public ofBaseApp{
     float occupiedEnd;
     float occupiedStartVal;
     float occupiedEndVal;
+
+    ofParameterGroup parameters;
+    ofParameter<float> gamma;
+    ofParameter<float> a;
+    ofParameter<int> blendExp;
+    ofParameter<int> overlap;
+    ofxPanel gui;
 
 	public:
 		void setup();

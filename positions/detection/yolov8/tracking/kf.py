@@ -25,7 +25,9 @@ class Kalman_Filter:
         # R - relative to Q, higher is more filtered
         # Saved: 5e-6, 5e-8
         r = 1e-10
+        # r = 1e-11
         # r = 5e-8
+        # r = 1e-12
         kalman.measurementNoiseCov = np.array([[1,0],[0,1]], np.float32) * r
 
 

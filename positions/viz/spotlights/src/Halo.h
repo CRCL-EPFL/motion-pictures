@@ -45,7 +45,7 @@ public:
     void setup(int _id, float _hue);
     void draw();
     void update();
-    void updateLocation(float _x, float _y);
+    void updateLocation(float _x, float _y, float _dir);
     
     void setMoveAnimation();
     void setDirAnimation(float dir);

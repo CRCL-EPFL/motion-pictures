@@ -14,8 +14,13 @@ uniform int priorities[10];
 
 out vec4 fragColor;
 
-const int OVERLAP = 660;
-const float GAMMA = 1.8;
+//const int OVERLAP = 790;
+//const float GAMMA = 2.2;
+
+uniform int overlap;
+uniform int blendExp;
+uniform float gamma;
+uniform float a;
 
 // conversion function
 #define rgbConv(r, g, b) vec3(r / 255.0, g / 255.0, b / 255.0)
@@ -47,8 +52,8 @@ vec3 soft_light(vec3 a, vec3 b, float w) {
 }
 
 // Set static background color to draw over
-//vec3 color = rgbConv(0.0, 0.0, 0.0);
-vec3 color = vec3(0.4 ,0.27, 0.87);
+vec3 color = rgbConv(0.0, 0.0, 0.0);
+//vec3 color = vec3(0.4 ,0.27, 0.87);
 
 float map(float value, float min1, float max1, float min2, float max2){
     return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
@@ -69,8 +74,10 @@ vec3 genColor( int i, float dist ){
                      0.0,
                      1.0 );
     rgb = rgb*rgb*(3.0-2.0*rgb);
+    vec3 rgb1 = vec3(0.4 ,0.27, 0.87);
 //    rgb = clamp(rgb*rgb*(3.0-2.0*rgb), 0., 1.);
     return v * mix(vec3(1.0), rgb, s);
+//    return rgb1;
 }
 
 vec3 hsb2rgb( vec3 color ){
@@ -87,6 +94,7 @@ vec3 hsb2rgb( vec3 color ){
 
 // TODO: Replace with matrix operation for more efficiency
 vec2 rotate(vec2 pivot, vec2 uv, float angle){
+//    angle = angle - (3*PI/2);
     angle = angle - (PI/2);
     
     float s = sin(angle);
@@ -145,6 +153,7 @@ vec4 multiMix(vec4[20] colors, float sum, bool multi){
 vec4 spotlight(vec2 uv, vec2 pos, float rad, vec3 color, float angle, int index, bool demo) {
 //    vec2 lcoords = rotate(pos, uv, data[index+4]);
     vec2 lcoords = rotate(pos, uv, directions[index]);
+    rad = (rad * map(moveFrame[index], 0., 1., .2, 1.));
     
     // test with width factor
 //    float blurLevel = (lcoords.y/rad * 0.5 + 0.5) * ((lcoords.x*wFactor)/lcoords.x);
@@ -154,6 +163,7 @@ vec4 spotlight(vec2 uv, vec2 pos, float rad, vec3 color, float angle, int index,
 //    float blurLevel = (lcoords.y/rad * 0.5 + 0.5) * data[index+2];
     // Set to + .49 to smooth 'bottom' edge
     float blurLevel = (lcoords.y/rad * 0.5 + 0.49) * moveFrame[index];
+//    float blurLevel = (lcoords.y/(rad * map(moveFrame[index], 0., 1., .5, 1.)) * 0.5 + 0.49) * moveFrame[index];
     
     // blur is only positive, greater as it gets farther from center in direction
     // when y distance > rad, blurLevel
@@ -168,11 +178,11 @@ vec4 spotlight(vec2 uv, vec2 pos, float rad, vec3 color, float angle, int index,
     // NOTE: Actually need to revisit this, can distance be negative? How is the 'bottom' becoming transparent?
     float L0 = rad * (1.0-blurLevel);
     // End
-//    float L1 = rad + (300. * blurLevel);
+    float L1 = rad + (300. * blurLevel);
     
     // Fluctuating L1
     // Control width
-    float L1 = rad + (FLUX * 3. + 1.) * 200. * blurLevel;
+//    float L1 = rad + (FLUX * 3. + 1.) * 200. * blurLevel;
     
     // points on the same y coord have the same endpoints but different distances
     // Maybe try not smoothstep?
@@ -225,11 +235,12 @@ vec4 spotlight(vec2 uv, vec2 pos, float rad, vec3 color, float angle, int index,
     
     // Apply edge sharpening
     // Cap amount to slightly over 1 to prevent overflow from making halo turn white
-    amount = demo ? ((amount + b > 1.0) ? 1.0 : amount + b) : amount;
+//    amount = demo ? ((amount + b > 1.0) ? 1.0 : amount + b) : amount;
     
 //    return vec4(color, amount);
-//    return vec4(color*amount, 1.);
-    return vec4(vec3(0.4 ,0.27, 0.87)*amount, 1.);
+    return vec4(color*amount, 1.);
+//    vec3 test = vec3(0.4 ,0.27, 0.87);
+//    return vec4(test*amount, 1.);
 }
 
 vec4 edge(vec2 uv, vec2 pos, float rad, vec3 color, float angle, int index, vec4[20] calculated, bool multi, bool enable, float overlap) {
@@ -295,7 +306,7 @@ float mapClamp(float value, float min1, float max1, float min2, float max2) {
 }
 
 float blend(float x) {
-	return clamp(.5 * pow(2*x, 2), 0., 1.);
+	return clamp(a * pow(2*x, blendExp), 0., 1.);
 }
 
 void main() {
@@ -315,12 +326,12 @@ void main() {
     float halfway = res.y/2.;
     
     // calculate location in overlap
-    float mask = 1. - mapClamp(uv.y, halfway+OVERLAP, halfway, 0., 1.);
+    float mask = 1. - mapClamp(uv.y, halfway+overlap, halfway, 0., 1.);
     // get mask values
     mask = blend(mask);
     
     // calculate location in overlap
-    float maskBot = 1. - mapClamp(uv.y, halfway-OVERLAP, halfway, 0., 1.);
+    float maskBot = 1. - mapClamp(uv.y, halfway-overlap, halfway, 0., 1.);
     // get mask values
     maskBot = blend(maskBot);
     
@@ -334,18 +345,20 @@ void main() {
 //        float radius = 0.08 * res.y * (sin(time) + 2.);
         vec3 col = genColor(i, length(center - uv));
         vec4 cg = spotlight(uv, center, radius, col, 1., i, i>0);
-        vec4 ch = halo(uv, vec2(center.x, center.y+1.5), radius, col);
+//        vec4 ch = halo(uv, vec2(center.x, center.y+1.5), radius, col);
 
-        float offCenter = center.y - (OVERLAP/2.);
+        float offCenter = center.y - (overlap/2.);
         vec3 colBot = genColor(i, length(offCenter - uv));
         vec4 cgBot = spotlight(uv, vec2(center.x, offCenter), radius, col, 1., i, i>0);
-        vec4 chBot = halo(uv, vec2(center.x, offCenter + 1.5), radius, col);
+//        vec4 chBot = halo(uv, vec2(center.x, offCenter + 1.5), radius, col);
         
         // Draw layered, works when not on GPU
-        // PROBLEM SOMEWHERE WITH THE SPOTLIGHT
-        color = mix( color, cg.rgb, cg.a*(1. - disFrame[i]) );
+//        color = mix( color, cg.rgb, cg.a*(1. - disFrame[i]) );
+        color = color + cg.rgb;
 //        color = mix(color, ch.rgb, ch.a * .6 * (1. - disFrame[i]));
-        colorBot = mix ( colorBot, cgBot.rgb, cgBot.a *(1. - disFrame[i]) );
+
+//        colorBot = mix ( colorBot, cgBot.rgb, cgBot.a *(1. - disFrame[i]) );
+        colorBot = colorBot + cgBot.rgb;
         
         calculated[i] = cg;
         sum += cg.a;
@@ -363,26 +376,26 @@ void main() {
     
     // Refactor:
     // For each color
-//    for (int i = 0; i < num * 2; i+=2){
-//        vec2 posRel = vec2(pos[i]/res.x, 1 - (pos[i+1]/res.y));
-//        vec2 center = res.xy * posRel;
-//        
-//        float radius = 0.12 * res.y * 1. - disFrame[i];
-//        
-//        vec3 col = genColor(i, length(center - uv));
-//        
-//        // Instead of multi, pass in a qualifier that is true when there are multiple colors and the current color alpha is less than something
-////        vec4 cz = edge(uv, center, radius, col, 1., i, calculated, multi && calculated[i].a < .4);
-////        vec4 cz = edge(uv, center, radius, col, 1., i, calculated, multi, i>0, calculated[0].a);
-//        // Pass in priority at same index
-//        vec4 cz = edge(uv, center, radius, col, 1., i, calculated, multi, priorities[i] == 1, calculated[0].a);
-//        vec4 czBot = edge(uv, vec2(center.x, center.y - (OVERLAP/2.)), radius, col, 1., i, calculated, multi, priorities[i] == 1, calculated[0].a);
-//        // Mix in new color, transparent if not multi
-////        color = mix(color, cz.rgb, multi ? cz.a : 0);
-//        // Make sure to link this to disFrame, but make it faster
-//        color = mix(color, cz.rgb, cz.a *(1. - disFrame[i]));
-//        colorBot = mix(colorBot, czBot.rgb, czBot.a *(1. - disFrame[i]));
-//    }
+    for (int i = 0; i < num * 2; i+=2){
+        vec2 posRel = vec2(pos[i]/res.x, 1 - (pos[i+1]/res.y));
+        vec2 center = res.xy * posRel;
+        
+        float radius = 0.12 * res.y * 1. - disFrame[i];
+        
+        vec3 col = genColor(i, length(center - uv));
+        
+        // Instead of multi, pass in a qualifier that is true when there are multiple colors and the current color alpha is less than something
+//        vec4 cz = edge(uv, center, radius, col, 1., i, calculated, multi && calculated[i].a < .4);
+//        vec4 cz = edge(uv, center, radius, col, 1., i, calculated, multi, i>0, calculated[0].a);
+        // Pass in priority at same index
+        vec4 cz = edge(uv, center, radius, col, 1., i, calculated, multi, priorities[i] == 1, calculated[0].a);
+        vec4 czBot = edge(uv, vec2(center.x, center.y - (overlap/2.)), radius, col, 1., i, calculated, multi, priorities[i] == 1, calculated[0].a);
+        // Mix in new color, transparent if not multi
+//        color = mix(color, cz.rgb, multi ? cz.a : 0);
+        // Make sure to link this to disFrame, but make it faster
+        color = mix(color, cz.rgb, cz.a *(1. - disFrame[i]));
+        colorBot = mix(colorBot, czBot.rgb, czBot.a *(1. - disFrame[i]));
+    }
     // Use weighted multicolor mix function
 //    vec4 mixColor = multiMix(calculated, sum, multi);
 
@@ -391,18 +404,18 @@ void main() {
 
     // Apply gamma  correction to top and bottom
 //    vec3 corrected = vec3(pow(color.r, 1./GAMMA), pow(color.g, 1./GAMMA), pow(color.b, 1./GAMMA));
-    vec3 corrected = pow(color, vec3(1.0/GAMMA));
-    vec3 correctedBot = vec3(pow(colorBot.r, 1./GAMMA), pow(colorBot.g, 1./GAMMA), pow(colorBot.b, 1./GAMMA));
+    vec3 corrected = pow(color, vec3(1.0/gamma));
+    vec3 correctedBot = vec3(pow(colorBot.r, 1./gamma), pow(colorBot.g, 1./gamma), pow(colorBot.b, 1./gamma));
 
     // mix between masked texture and gamma corrected based on mask value
     color = mix(corrected, color, mask);
-//    colorBot = mix(correctedBot, colorBot, maskBot);
+    colorBot = mix(correctedBot, colorBot, maskBot);
 
     color = color + colorBot;
 //    color = corrected + correctedBot;
     
     // APPLY GRAIN
-    color = applyGrain(uv, color);
+//    color = applyGrain(uv, color);
     
     fragColor = vec4( color, 1.0 );
 //    fragColor = mixColor;

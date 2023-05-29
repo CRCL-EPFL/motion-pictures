@@ -12,7 +12,7 @@ void ofApp::setup(){
         }
     #endif
     
-    ofHideCursor();
+    //ofHideCursor();
     
     // deleteEvent triggers this listener
     ofAddListener(Halo::del, this, &ofApp::delHalo);
@@ -27,6 +27,13 @@ void ofApp::setup(){
     occupiedEnd= ofGetElapsedTimef() + .2;
     occupiedEndVal = 0;
     occupied = false;
+
+    parameters.setName("Calibration");
+    parameters.add(gamma.set("Gamma", 2.0, 1.0, 5.0));
+    parameters.add(a.set("Multiplier", .5, 0., 1.0));
+    parameters.add(blendExp.set("Blend Power", 1, 1, 3));
+    parameters.add(overlap.set("Overlap", 630, 60, 900));
+    gui.setup(parameters);
 }
 
 //--------------------------------------------------------------
@@ -35,6 +42,7 @@ void ofApp::update(){
     while (receiver.hasWaitingMessages()){
         ofxOscMessage m;
         receiver.getNextMessage(m);
+        // cout << "Message address " << m.getAddress() << endl;
         // cout << "Message address " << m.getAddress() << endl;
 
         int id = m.getArgAsInt(0);
@@ -55,16 +63,19 @@ void ofApp::update(){
                 int tempX = int(m.getArgAsFloat(baseInd + 1) * ofGetWidth());
                 int tempY = int(m.getArgAsFloat(baseInd + 2) * ofGetHeight());
 
-                cout << "x: " << tempX << ", y: " << tempY << endl;
+                //cout << "x: " << tempX << ", y: " << tempY << endl;
 
+                float tempDir = float(m.getArgAsFloat(baseInd + 3));
+                //cout << "Temporary direction: " << tempDir << endl;
 
                 if (haloMap.find(coordId) != haloMap.end()){
                     // cout << "Found " << id << " x: " << tempX << " --- ";
                     //cout << "ID " << haloMap.find(coordId) -> first << " in map" << endl;
-                    haloMap[coordId].updateLocation(tempX, tempY);
+                    haloMap[coordId].updateLocation(tempX, tempY, tempDir);
                     haloMap[coordId].update();
                 }
-                // if not at the max size
+                // If not at the max size
+                // Create new Halo object
                 else {
                     Halo tempHalo;
                     haloMap.insert(make_pair(coordId, tempHalo));
@@ -83,7 +94,6 @@ void ofApp::update(){
 
                     cout << "hue: " << hue << endl;
 
-                    
                     haloMap[coordId].setup(coordId, hue);
                 }
             }
@@ -99,17 +109,18 @@ void ofApp::update(){
                 //     cout << ofGetElapsedTimef() << ": Received state for " << id << " to " << stateId << endl;
                 // }
 
-                // int id = m.getArgAsInt(0);
-                // int stateId = m.getArgAsInt(1);
-                // haloMap[id].setMoveAnimation(stateId);
-                // cout << ofGetElapsedTimef() << ": Received state for " << id << " to " << stateId << endl;
+                 int id = m.getArgAsInt(0);
+                 int stateId = m.getArgAsInt(1);
+                 haloMap[id].setMoveAnimation();
+                 cout << ofGetElapsedTimef() << ": Received state for " << id << " to " << stateId << endl;
             }
             else if (m.getAddress() == "/points/delete"){
                 int id = m.getArgAsInt(0);
 
-                haloMap[id].setDeleteAnimation();
-                disappearStore.push_back(id);
-    //            haloMap.erase(id);
+                /*haloMap[id].setDeleteAnimation();
+                disappearStore.push_back(id);*/
+                // Immediately delete
+                haloMap.erase(id);
             }
             else if (m.getAddress() == "/points/direction"){
                 for (int i = 0; i < m.getNumArgs(); i += 2){
@@ -190,7 +201,7 @@ void ofApp::update(){
             flatCoords[it+1] = comp.second.y;
 
       
-            std::cout <<"FLATTENED: " << flatCoords[it] << ", " << flatCoords[it+1] << endl;
+            //std::cout <<"FLATTENED: " << flatCoords[it] << ", " << flatCoords[it+1] << endl;
             
             flatHues[it] = comp.second.hue;
             
@@ -234,11 +245,21 @@ void ofApp::update(){
 void ofApp::draw(){
     float flatTest[20]{};
     float moveTest[20]{};
+    /*flatTest[0] = ofGetWidth()/2;
+    flatTest[1] = ofGetHeight()/2; */
     flatTest[0] = mouseX;
     flatTest[1] = mouseY;
     moveTest[0] = 1;
 
+    float dirTest[20]{};
+    dirTest[0] = 3.1;
+
     shader.begin();
+    shader.setUniform1i("overlap", overlap);
+    shader.setUniform1i("blendExp", blendExp);
+    shader.setUniform1f("gamma", gamma);
+    shader.setUniform1f("a", a);
+
 //    cout << ofGetElapsedTimef() << endl;
     shader.setUniform1f("time", ofGetElapsedTimef());
     shader.setUniform2f("res", ofGetWidth(), ofGetHeight());
@@ -247,14 +268,18 @@ void ofApp::draw(){
     shader.setUniform1fv("pos", &flatCoords[0], haloMap.size()*2);
     shader.setUniform1fv("hues", &flatHues[0], haloMap.size()*2);
     shader.setUniform1fv("moveFrame", &flatMoveFrames[0], haloMap.size()*2);
-    shader.setUniform1fv("directions", &flatDirections[0], haloMap.size()*2);
+    shader.setUniform1fv("directions", &flatDirections[0], haloMap.size() * 2);
+    //shader.setUniform1fv("directions", &dirTest[0], haloMap.size()*2);
     shader.setUniform1fv("disFrame", &flatDisFrames[0], haloMap.size()*2);
-    shader.setUniform1iv("priorities", &flatPriorities[0], haloMap.size()*2);
+    //shader.setUniform1iv("priorities", &flatPriorities[0], haloMap.size()*2);
 
-    shader.setUniform1i("num", 1);
-    // Pass in address of array start
-    shader.setUniform1fv("moveFrame", &moveTest[0], 2);
-    shader.setUniform1fv("pos", &flatTest[0], 2);
+    //cout << "DIRECTIONS: " << flatDirections[0] << endl;
+
+    //shader.setUniform1i("num", 1);
+    //// Pass in address of array start
+    //shader.setUniform1fv("moveFrame", &moveTest[0], 2);
+    //shader.setUniform1fv("pos", &flatTest[0], 2);
+    //cout << "Number of people: " << haloMap.size() << endl;
 
     shader.setUniform1f("occupied", occupiedFrame);
     // cout << "Occupied: " << (haloMap.size() > 0) << endl;
@@ -266,6 +291,9 @@ void ofApp::draw(){
     // ofSetColor(0, 0, 0);
     ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
     shader.end();
+
+    gui.draw();
+
 }
 
 // callback on delete event
