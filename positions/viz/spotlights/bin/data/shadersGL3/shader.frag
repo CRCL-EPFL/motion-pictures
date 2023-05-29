@@ -67,7 +67,8 @@ vec3 genColor( int i, float dist ){
     // Use dist to decrease saturation the closer to center it is
     float smoothDist = map(abs(dist), 0., 100., .2, 1.);
 //    float s = .6;
-    float s = smoothDist * .6;
+//    float s = smoothDist * .6;
+    float s = color[1];
     float v = .99;
     vec3 rgb = clamp(abs(mod(h*6.0+vec3(0.0,4.0,2.0),
                      6.0)-3.0)-1.0,
@@ -80,16 +81,18 @@ vec3 genColor( int i, float dist ){
 //    return rgb1;
 }
 
-vec3 hsb2rgb( vec3 color ){
-    float h = color[0];
-    float s = color[1];
-    float v = color[2];
-    vec3 rgb = clamp(abs(mod(h*6.0+vec3(0.0,4.0,2.0),
-                             6.0)-3.0)-1.0,
-                     0.0,
-                     1.0 );
-    rgb = rgb*rgb*(3.0-2.0*rgb);
-    return v * mix(vec3(1.0), rgb, s);
+vec3 hsv2rgbAlt(vec3 c, float dist)
+{
+    float h = c.x;
+    h += GOLD;
+    h = mod(h, 1.);
+
+    float smoothdist = map(abs(dist), 0., 100., .3, .8);
+    c.y = smoothdist * .6;
+
+    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
 
 // TODO: Replace with matrix operation for more efficiency
@@ -151,8 +154,9 @@ vec4 multiMix(vec4[20] colors, float sum, bool multi){
  */
 
 vec4 spotlight(vec2 uv, vec2 pos, float rad, vec3 color, float angle, int index, bool demo) {
-//    vec2 lcoords = rotate(pos, uv, data[index+4]);
     vec2 lcoords = rotate(pos, uv, directions[index]);
+
+    // Shrink radius based on moveFrame
     rad = (rad * map(moveFrame[index], 0., 1., .2, 1.));
     
     // test with width factor
@@ -160,17 +164,17 @@ vec4 spotlight(vec2 uv, vec2 pos, float rad, vec3 color, float angle, int index,
     
     // Adjust blurLevel according to movement state
     // 0 results in a round circle
-//    float blurLevel = (lcoords.y/rad * 0.5 + 0.5) * data[index+2];
     // Set to + .49 to smooth 'bottom' edge
     float blurLevel = (lcoords.y/rad * 0.5 + 0.49) * moveFrame[index];
-//    float blurLevel = (lcoords.y/(rad * map(moveFrame[index], 0., 1., .5, 1.)) * 0.5 + 0.49) * moveFrame[index];
     
     // blur is only positive, greater as it gets farther from center in direction
     // when y distance > rad, blurLevel
     blurLevel = max(1.0-blurLevel, 0.0 );
     
     // get length of vector (distance to center)
-    float d = length(lcoords);
+//    float d = length(lcoords);
+    float xScale = map(moveFrame[index], 0., 1., 1., 1.2);
+    float d = length(vec2(lcoords.x*xScale, lcoords.y));
     
     // Start
     // Highest value possible is radius, meaning core is solid colored
@@ -196,14 +200,13 @@ vec4 spotlight(vec2 uv, vec2 pos, float rad, vec3 color, float angle, int index,
     // ADJUST STRENGTH
     // Raise amount to a power below 1. to make it stronger, raising all values below
 //    amount = pow(amount, .8 + (FLUX));
-   amount = pow(amount, .2);
+//   amount = pow(amount, .2);
+   amount = pow(amount, .5);
 //    amount = pow(amount, .85 + FLUX);
 //    amount = pow(amount, .5 * (FLUX));
-//    amount = pow(amount, .5 + FLUX / 2.);
-//    amount = pow(amount, .5 + FLUX);
     
     // Modifying the strength of the spotlight by scaling amount based on original value
-//    amount = amount + S(0., 1., amount);
+    amount = amount + S(0., 1., amount);
     
     // Modifying amount to make a sharp edge
     // Not the same around core
@@ -341,14 +344,16 @@ void main() {
         vec2 center = res.xy * posRel;
 //        float radius = 0.12 * res.y;
         
-        float radius = 0.15 * res.y * 1. - disFrame[i];
+        float radius = 0.25 * res.y * 1. - disFrame[i];
 //        float radius = 0.08 * res.y * (sin(time) + 2.);
-        vec3 col = genColor(i, length(center - uv));
+//        vec3 col = genColor(i, length(center - uv));
+        vec3 col = hsv2rgbAlt(vec3(hues[i], .7, .99), length(center - uv));
         vec4 cg = spotlight(uv, center, radius, col, 1., i, i>0);
 //        vec4 ch = halo(uv, vec2(center.x, center.y+1.5), radius, col);
 
         float offCenter = center.y - (overlap/2.);
-        vec3 colBot = genColor(i, length(offCenter - uv));
+//        vec3 colBot = genColor(i, length(offCenter - uv));
+        vec3 colBot = hsv2rgbAlt(vec3(hues[i], .7, .99), length(center - uv));
         vec4 cgBot = spotlight(uv, vec2(center.x, offCenter), radius, col, 1., i, i>0);
 //        vec4 chBot = halo(uv, vec2(center.x, offCenter + 1.5), radius, col);
         
