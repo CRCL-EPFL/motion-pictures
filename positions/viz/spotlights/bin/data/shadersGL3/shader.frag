@@ -228,7 +228,8 @@ vec4 spotlight(vec2 uv, vec2 pos, float rad, vec3 color, float angle, int index,
     amount = demo ? ((amount + b > 1.0) ? 1.0 : amount + b) : amount;
     
 //    return vec4(color, amount);
-    return vec4(color*amount, 1.);
+//    return vec4(color*amount, 1.);
+    return vec4(vec3(0.4 ,0.27, 0.87)*amount, 1.);
 }
 
 vec4 edge(vec2 uv, vec2 pos, float rad, vec3 color, float angle, int index, vec4[20] calculated, bool multi, bool enable, float overlap) {
