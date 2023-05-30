@@ -174,7 +174,9 @@ vec4 spotlight(vec2 uv, vec2 pos, float rad, vec3 color, float angle, int index,
     // get length of vector (distance to center)
 //    float d = length(lcoords);
     float xScale = map(moveFrame[index], 0., 1., 1., 1.2);
-    float d = length(vec2(lcoords.x*xScale, lcoords.y));
+    // TEST HERE
+    float yScale = map(moveFrame[index], 0., 1., 0., rad/2.);
+    float d = length(vec2(lcoords.x*xScale, lcoords.y + yScale));
     
     // Start
     // Highest value possible is radius, meaning core is solid colored
@@ -344,7 +346,7 @@ void main() {
         vec2 center = res.xy * posRel;
 //        float radius = 0.12 * res.y;
         
-        float radius = 0.25 * res.y * 1. - disFrame[i];
+        float radius = 0.3 * res.y * 1. - disFrame[i];
 //        float radius = 0.08 * res.y * (sin(time) + 2.);
 //        vec3 col = genColor(i, length(center - uv));
         vec3 col = hsv2rgbAlt(vec3(hues[i], .7, .99), length(center - uv));
