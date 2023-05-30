@@ -25,7 +25,7 @@ void Halo::setup(int _id, float _hue){
     moveEndTime = moveStartTime + 1;
     
     fadeStartTime = ofGetElapsedTimef();
-    fadeEndTime = fadeStartTime + 2;
+    fadeEndTime = fadeStartTime + 3;
     
     // set disFrame so that it's not < 0 at the start
     disFrame = 0;
