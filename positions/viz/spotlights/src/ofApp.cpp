@@ -12,7 +12,7 @@ void ofApp::setup(){
         }
     #endif
     
-    //ofHideCursor();
+    ofHideCursor();
     
     // deleteEvent triggers this listener
     ofAddListener(Halo::del, this, &ofApp::delHalo);
@@ -292,7 +292,7 @@ void ofApp::draw(){
     ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
     shader.end();
 
-    gui.draw();
+    //gui.draw();
 
 }
 

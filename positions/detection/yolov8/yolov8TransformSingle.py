@@ -59,7 +59,7 @@ while cap1.isOpened():
         frame1 = undistort(frame1, map1, map2)
 
         # Run YOLOv8 inference on the frame
-        results1 = model.track(frame1, classes=0, tracker="config.yaml", imgsz=320, persist=True, verbose=False)
+        results1 = model.track(frame1, classes=0, tracker="tracking/config.yaml", imgsz=320, persist=True, verbose=False)
 
         if results1[0].boxes.id != None:
             boxes = results1[0].boxes.xyxy.cpu().numpy().astype(int)
@@ -103,8 +103,8 @@ while cap1.isOpened():
         #     cv2.circle(frame1, object.values(), 4, (0,0,255), -1)
 
         # Display the annotated frame
-        cv2.imshow("annotate1", frame1)
-        cv2.imshow("blank1", blank)
+        # cv2.imshow("annotate1", frame1)
+        # cv2.imshow("blank1", blank)
 
         # Break the loop if 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord("q"):

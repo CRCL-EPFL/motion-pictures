@@ -173,7 +173,7 @@ vec4 spotlight(vec2 uv, vec2 pos, float rad, vec3 color, float angle, int index,
     
     // get length of vector (distance to center)
 //    float d = length(lcoords);
-    float xScale = map(moveFrame[index], 0., 1., 1., 1.2);
+    float xScale = map(moveFrame[index], 0., 1., 1., 1.5);
     // TEST HERE
     float yScale = map(moveFrame[index], 0., 1., 0., rad/2.);
     float d = length(vec2(lcoords.x*xScale, lcoords.y + yScale));

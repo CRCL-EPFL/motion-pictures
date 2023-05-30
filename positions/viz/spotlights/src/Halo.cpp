@@ -78,6 +78,7 @@ void Halo::update(){
     
     if (!startDelete){
         disFrame = ofxeasing::map_clamp(time, fadeStartTime, fadeEndTime, 1., 0., &ofxeasing::cubic::easeOut);
+        cout << "Disappear frame: " << disFrame << endl;
     }
     //disFrame = 0;
     
