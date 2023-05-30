@@ -1,7 +1,7 @@
 import cv2
 from ultralytics import YOLO
 import numpy as np
-from tracking.tracker import Tracker
+from tracking.multiTracker import Tracker
 
 # Settings for unwarp fisheye 
 DIM=(1280, 720)
@@ -19,7 +19,7 @@ def undistort(img, map1, map2):
 model1 = YOLO('yolov8n.pt')
 model2 = YOLO('yolov8n.pt')
 
-# Open the video file1
+# Open the video file
 cap1 = cv2.VideoCapture(0)
 cap2 = cv2.VideoCapture(1)
 
@@ -30,6 +30,9 @@ cap2 = cv2.VideoCapture(1)
 # Width and height of projection area in pixels
 w = 1920
 h = 1880
+tolerance = 10
+
+track = Tracker((w, h))
 
 # Corner points to be perspective transformed
 inputPoints1 = np.float32([[187, 318],[522, 223],[355, 644],[740, 427]])
@@ -47,10 +50,10 @@ while cap1.isOpened() and cap2.isOpened():
     # Init blank frame
     blank = np.zeros((h, w, 3), np.uint8)
 
-    track1 = Tracker((w, h))
-    track2 = Tracker((w, h))
     points1 = []
+    ids1 = []
     points2 = []
+    ids2 = []
 
     if success1 and success2:
         frame1 = cv2.rotate(frame1, cv2.ROTATE_180)
@@ -61,8 +64,8 @@ while cap1.isOpened() and cap2.isOpened():
         # Run YOLOv8 inference on the frame
         # results1 = model1.track(frame1, classes=0, imgsz=160, show=True, persist=True)
         # results2 = model2.track(frame2, classes=0, imgsz=160, persist=True)
-        results1 = model1.track(frame1, classes=0, show=True, persist=True)
-        results2 = model2.track(frame2, classes=0, persist=True)
+        results1 = model1.track(frame1, classes=0, tracker = "config.yaml", persist=True)
+        results2 = model2.track(frame2, classes=0, tracker = "config.yaml", persist=True)
 
         if results1[0].boxes.id !=  None:
             boxes = results1[0].boxes.xyxy.cpu().numpy().astype(int)
@@ -74,12 +77,16 @@ while cap1.isOpened() and cap2.isOpened():
 
                 transPoint = cv2.perspectiveTransform(np.float32(np.array([[[point[0], point[1]]]])), matrix1)[0][0]
                 # Add transformed points to the array for tracker
-                points1.append((int(transPoint[0]), int(transPoint[1])))
+                formTransPoint = (int(transPoint[0]), int(transPoint[1]))
+
+                # Don't pass if outside area, not perfect since it won't match up with K filtered results
+                if 0 - tolerance < formTransPoint[0] < w + tolerance and 0-tolerance < formTransPoint[1] < h + tolerance:
+                    # print("INSIDE AREA")
+                    points1.append(formTransPoint)
+                    ids1.append(id)
 
                 cv2.rectangle(frame1, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
-                cv2.circle(frame1, point, 4, (255,0,0), -1)
-
-            objects = track1.update(ids, points1)
+                # cv2.circle(frame1, point, 4, (255,0,0), -1)
             
         if  results2[0].boxes.id !=  None:
             boxes = results2[0].boxes.xyxy.cpu().numpy().astype(int)
@@ -96,7 +103,17 @@ while cap1.isOpened() and cap2.isOpened():
                 cv2.rectangle(frame2, (box[0], box[1]), (box[2], box[3]), (0,255,0), 2)
                 cv2.circle(frame2, point, 4, (255,0,0), -1)
 
-            objects = track2.update(ids, points1)
+        # Pass both ids and points lists 
+        objects = track.update(ids1, points1, ids2, points2)
+
+        for (id, point) in objects.items():
+            # cv2.circle(frame1, centroid, 4, (0,0,255), -1)
+            formatPoint = (int(point[0] * w), int(point[1] * h))
+            # print("POINT to draw: " + str(formatPoint))
+            print(point)
+            # print("vecX: " + str(point[2]) + ", vecY: " + str(point[3]))
+            # print(point)
+            cv2.circle(blank, formatPoint, 8, (0,0,255), -1)
             
         # Display the annotated frame
         cv2.imshow("annotate1", frame1)

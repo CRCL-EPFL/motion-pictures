@@ -18,7 +18,7 @@ def undistort(img, map1, map2):
 # Load the YOLOv8 model
 model = YOLO('yolov8n.pt')
 
-# Open the video file1
+# Open the video file
 cap1 = cv2.VideoCapture(0)
 
 # Set camera stream dimensions
@@ -59,7 +59,7 @@ while cap1.isOpened():
         frame1 = undistort(frame1, map1, map2)
 
         # Run YOLOv8 inference on the frame
-        results1 = model.track(frame1, classes=0, tracker="botsort.yaml", imgsz=320, persist=True, verbose=False)
+        results1 = model.track(frame1, classes=0, tracker="config.yaml", imgsz=320, persist=True, verbose=False)
 
         if results1[0].boxes.id != None:
             boxes = results1[0].boxes.xyxy.cpu().numpy().astype(int)
