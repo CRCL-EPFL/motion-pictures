@@ -11,7 +11,7 @@ Within the installation area, each occupant’s personal space is visualized on 
 
 The hardware setup consists of two commodity projectors (Epson EB2250), an Intel NUC, and two board cameras. Multiple projectors can be connected to adjust size and shape of the covered space, making the system adaptable to different sites and conditions. 
 
-![img02](/images/Figure2.PNG)
+![img02](/images/Figure2.png)
 
 
 ### DATA POLICY
@@ -19,19 +19,21 @@ The hardware setup consists of two commodity projectors (Epson EB2250), an Intel
 The project never collects or stores any personally identifiable information. Video data from the camera system is used for people detection and tracking before being translated to Cartesian coordinates. Only these coordinates are used for the behavior model and light projection.
 
 
-![img03](/images/Figure3.PNG)
+![img03](/images/Figure3.png)
 
 --------------
 
+#### CREDITS
+
 by Eric Duong and Prof. Stefana Parascho, CRCL, EPFL
 
-With the support of: Maxence Grangeot, Alexandra Pittiglio, F
+With the support of: Maxence Grangeot, Alexandra Pittiglio
 
 | CRCL | EPFL |
 | --- | --- |
 | ![crcl](/images/CRCLWordmarkHotPink.png) | ![epfl](https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_EPFL.svg) |
 
-[CRCL](https://crclcrclcrcl.org/)
+[CRCLCRCLCRCL](https://crclcrclcrcl.org/)
 
 
 contact: [eric.duong@epfl.ch](mailto:eric.duong@epfl.ch)
