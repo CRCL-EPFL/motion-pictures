@@ -361,11 +361,13 @@ void main() {
         
         // Draw layered, works when not on GPU
 //        color = mix( color, cg.rgb, cg.a*(1. - disFrame[i]) );
-        color = color + cg.rgb;
+        //color = color + cg.rgb;
+        color = color + cg.rgb*(1.-disFrame[i]);
 //        color = mix(color, ch.rgb, ch.a * .6 * (1. - disFrame[i]));
 
 //        colorBot = mix ( colorBot, cgBot.rgb, cgBot.a *(1. - disFrame[i]) );
         colorBot = colorBot + cgBot.rgb;
+        //colorBot = colorBot + cgBot.rgb*(1.-disFrame[i]);
         
         calculated[i] = cg;
         sum += cg.a;
