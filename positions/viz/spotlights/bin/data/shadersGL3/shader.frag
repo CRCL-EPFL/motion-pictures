@@ -8,10 +8,6 @@ uniform int num;
 uniform float moveFrame[10];
 uniform float disFrame[10];
 uniform float directions[10];
-uniform int priorities[10];
-// layout: [x, y, state, opacity, direction, color]
-// uniform float data[60];
-
 out vec4 fragColor;
 
 //const int OVERLAP = 790;
@@ -81,7 +77,7 @@ vec3 genColor( int i, float dist ){
 //    return rgb1;
 }
 
-vec3 hsv2rgbAlt(vec3 c, float dist)
+vec3 hsv2rgb(vec3 c, float dist)
 {
     float h = c.x;
     h += GOLD;
@@ -156,8 +152,10 @@ vec4 multiMix(vec4[20] colors, float sum, bool multi){
 vec4 spotlight(vec2 uv, vec2 pos, float rad, vec3 color, float angle, int index, bool demo) {
     vec2 lcoords = rotate(pos, uv, directions[index]);
 
+    float clampMove = clamp(moveFrame[index], 0., 1.);
+
     // Shrink radius based on moveFrame
-    rad = (rad * map(moveFrame[index], 0., 1., .2, 1.));
+    rad = (rad * map(clampMove, 0., 1., .2, 1.));
     
     // test with width factor
 //    float blurLevel = (lcoords.y/rad * 0.5 + 0.5) * ((lcoords.x*wFactor)/lcoords.x);
@@ -173,9 +171,9 @@ vec4 spotlight(vec2 uv, vec2 pos, float rad, vec3 color, float angle, int index,
     
     // get length of vector (distance to center)
 //    float d = length(lcoords);
-    float xScale = map(moveFrame[index], 0., 1., 1., 1.5);
+    float xScale = map(clampMove, 0., 1., 1., 1.5);
     // TEST HERE
-    float yScale = map(moveFrame[index], 0., 1., 0., rad/2.);
+    float yScale = map(clampMove, 0., 1., 0., rad/2.);
     float d = length(vec2(lcoords.x*xScale, lcoords.y + yScale));
     
     // Start
@@ -349,19 +347,21 @@ void main() {
         float radius = 0.3 * res.y * 1. - disFrame[i];
 //        float radius = 0.08 * res.y * (sin(time) + 2.);
 //        vec3 col = genColor(i, length(center - uv));
-        vec3 col = hsv2rgbAlt(vec3(hues[i], .7, .99), length(center - uv));
+        vec3 col = hsv2rgb(vec3(hues[i], .7, .99), length(center - uv));
         vec4 cg = spotlight(uv, center, radius, col, 1., i, i>0);
 //        vec4 ch = halo(uv, vec2(center.x, center.y+1.5), radius, col);
 
-        float offCenter = center.y - (overlap/2.);
-//        vec3 colBot = genColor(i, length(offCenter - uv));
-        vec3 colBot = hsv2rgbAlt(vec3(hues[i], .7, .99), length(center - uv));
-        vec4 cgBot = spotlight(uv, vec2(center.x, offCenter), radius, col, 1., i, i>0);
+        vec2 offCenter = vec2(center.x, center.y - (overlap/2.));
+
+        vec3 colBot = hsv2rgb(vec3(hues[i], .7, .99), length(offCenter - uv));
+        vec4 cgBot = spotlight(uv, offCenter, radius, colBot, 1., i, i>0);
 //        vec4 chBot = halo(uv, vec2(center.x, offCenter + 1.5), radius, col);
         
         // Draw layered, works when not on GPU
 //        color = mix( color, cg.rgb, cg.a*(1. - disFrame[i]) );
         //color = color + cg.rgb;
+
+        // Fade in
         color = color + cg.rgb*(1.-disFrame[i]);
 //        color = mix(color, ch.rgb, ch.a * .6 * (1. - disFrame[i]));
 
@@ -382,31 +382,6 @@ void main() {
     }
     
     multi = (numColors > 1 && calculated[0].a > .15) ? true : false;
-    
-    // Refactor:
-    // For each color
-    for (int i = 0; i < num * 2; i+=2){
-        vec2 posRel = vec2(pos[i]/res.x, 1 - (pos[i+1]/res.y));
-        vec2 center = res.xy * posRel;
-        
-        float radius = 0.12 * res.y * 1. - disFrame[i];
-        
-        vec3 col = genColor(i, length(center - uv));
-        
-        // Instead of multi, pass in a qualifier that is true when there are multiple colors and the current color alpha is less than something
-//        vec4 cz = edge(uv, center, radius, col, 1., i, calculated, multi && calculated[i].a < .4);
-//        vec4 cz = edge(uv, center, radius, col, 1., i, calculated, multi, i>0, calculated[0].a);
-        // Pass in priority at same index
-        vec4 cz = edge(uv, center, radius, col, 1., i, calculated, multi, priorities[i] == 1, calculated[0].a);
-        vec4 czBot = edge(uv, vec2(center.x, center.y - (overlap/2.)), radius, col, 1., i, calculated, multi, priorities[i] == 1, calculated[0].a);
-        // Mix in new color, transparent if not multi
-//        color = mix(color, cz.rgb, multi ? cz.a : 0);
-        // Make sure to link this to disFrame, but make it faster
-        color = mix(color, cz.rgb, cz.a *(1. - disFrame[i]));
-        colorBot = mix(colorBot, czBot.rgb, czBot.a *(1. - disFrame[i]));
-    }
-    // Use weighted multicolor mix function
-//    vec4 mixColor = multiMix(calculated, sum, multi);
 
     color = color*mask;
     colorBot = colorBot*maskBot;

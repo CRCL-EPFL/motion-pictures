@@ -95,7 +95,7 @@ void ofApp::update(){
 
                     cout << "hue: " << hue << endl;
 
-                    haloMap[coordId].setup(coordId, hue);
+                    haloMap[coordId].setup(coordId, hue, tempX, tempY);
                 }
             }
         }
@@ -199,11 +199,11 @@ void ofApp::update(){
             flatCoords[it] = comp.second.x;
             flatCoords[it+1] = comp.second.y;
 
-            std::cout <<"FLATTENED: " << flatCoords[it] << ", " << flatCoords[it+1] << endl;
+            //std::cout <<"FLATTENED: " << flatCoords[it] << ", " << flatCoords[it+1] << endl;
             
             flatHues[it] = comp.second.hue;
             
-            std::cout <<"FLATTENED H: " << flatHues[it] << endl;
+            //std::cout <<"FLATTENED H: " << flatHues[it] << endl;
             
             flatMoveFrames[it] = comp.second.moveFrame;
             flatDirections[it] = comp.second.destAngle;
@@ -277,6 +277,7 @@ void ofApp::draw(){
     //shader.setUniform1iv("priorities", &flatPriorities[0], haloMap.size()*2);
 
     //cout << "DIRECTIONS: " << flatDirections[0] << endl;
+    cout << "MOVEFRAME: " << flatMoveFrames[0] << endl;
 
 //    shader.setUniform1i("num", 1);
 //    // Pass in address of array start
