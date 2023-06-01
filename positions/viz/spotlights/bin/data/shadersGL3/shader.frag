@@ -427,6 +427,7 @@ void main() {
 //    color = applyGrain(uv, color);
     
     fragColor = vec4( color, 1.0 );
+//    fragColor = vec4( vec3(.3, .6, .7), 1.0 );
 //    fragColor = mixColor;
 //    fragColor = vec4(mask+maskBot,mask+maskBot,mask+maskBot, 1.);
     

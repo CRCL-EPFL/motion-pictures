@@ -24,7 +24,7 @@ void ofApp::setup(){
     // occupiedFrame = 0;
     occupiedStart = ofGetElapsedTimef();
     occupiedStartVal = 0.1;
-    occupiedEnd= ofGetElapsedTimef() + .2;
+    occupiedEnd = ofGetElapsedTimef() + .2;
     occupiedEndVal = 0;
     occupied = false;
 
@@ -51,7 +51,7 @@ void ofApp::update(){
         if (m.getAddress() == "/points"){
             // length is the number of complete objects, total message length / number of parameters
             // Parameters include (in order): id, x pos, y pos
-            int length = m.getNumArgs() / base;
+            int length = int(m.getNumArgs() / base);
             
             for (int i = 0; i < length; i++){
                 int baseInd = i * base;
@@ -63,7 +63,7 @@ void ofApp::update(){
                 int tempX = int(m.getArgAsFloat(baseInd + 1) * ofGetWidth());
                 int tempY = int(m.getArgAsFloat(baseInd + 2) * ofGetHeight());
 
-                //cout << "x: " << tempX << ", y: " << tempY << endl;
+                cout << "x: " << tempX << ", y: " << tempY << endl;
 
                 float tempDir = float(m.getArgAsFloat(baseInd + 3));
                 //cout << "Temporary direction: " << tempDir << endl;
@@ -77,6 +77,7 @@ void ofApp::update(){
                 // If not at the max size
                 // Create new Halo object
                 else {
+                    cout << "CREATE" << endl;
                     Halo tempHalo;
                     haloMap.insert(make_pair(coordId, tempHalo));
                     // haloMap[coordId].setup(coordId);
@@ -134,7 +135,7 @@ void ofApp::update(){
                     cout << ofGetElapsedTimef() << ": Received dir for " << id << " to " << direction << endl;
                 }
             }
-            else if (m.getAddress() == "/centroids/disappear") {
+            else if (m.getAddress() == "/points/disappear") {
                 // TO-DO
                 // pass compass id(s), execute their delete() functions
                 // moves to separate data structure
@@ -148,8 +149,6 @@ void ofApp::update(){
                 }
             }
         }
-        
-        
         
     }
 //    if (haloMap.size() > 0){
@@ -200,10 +199,11 @@ void ofApp::update(){
             flatCoords[it] = comp.second.x;
             flatCoords[it+1] = comp.second.y;
 
-      
-            //std::cout <<"FLATTENED: " << flatCoords[it] << ", " << flatCoords[it+1] << endl;
+            std::cout <<"FLATTENED: " << flatCoords[it] << ", " << flatCoords[it+1] << endl;
             
             flatHues[it] = comp.second.hue;
+            
+            std::cout <<"FLATTENED H: " << flatHues[it] << endl;
             
             flatMoveFrames[it] = comp.second.moveFrame;
             flatDirections[it] = comp.second.destAngle;
@@ -253,6 +253,9 @@ void ofApp::draw(){
 
     float dirTest[20]{};
     dirTest[0] = 3.1;
+    
+    int numHalos = int(haloMap.size());
+    int adjNum = numHalos * 2;
 
     shader.begin();
     shader.setUniform1i("overlap", overlap);
@@ -264,22 +267,22 @@ void ofApp::draw(){
     shader.setUniform1f("time", ofGetElapsedTimef());
     shader.setUniform2f("res", ofGetWidth(), ofGetHeight());
     // number of halos
-    shader.setUniform1i("num", haloMap.size());
-    shader.setUniform1fv("pos", &flatCoords[0], haloMap.size()*2);
-    shader.setUniform1fv("hues", &flatHues[0], haloMap.size()*2);
-    shader.setUniform1fv("moveFrame", &flatMoveFrames[0], haloMap.size()*2);
-    shader.setUniform1fv("directions", &flatDirections[0], haloMap.size() * 2);
+    shader.setUniform1i("num", numHalos);
+    shader.setUniform1fv("pos", &flatCoords[0], adjNum);
+    shader.setUniform1fv("hues", &flatHues[0], adjNum);
+    shader.setUniform1fv("moveFrame", &flatMoveFrames[0], adjNum);
+    shader.setUniform1fv("directions", &flatDirections[0], adjNum);
     //shader.setUniform1fv("directions", &dirTest[0], haloMap.size()*2);
-    shader.setUniform1fv("disFrame", &flatDisFrames[0], haloMap.size()*2);
+    shader.setUniform1fv("disFrame", &flatDisFrames[0], adjNum);
     //shader.setUniform1iv("priorities", &flatPriorities[0], haloMap.size()*2);
 
     //cout << "DIRECTIONS: " << flatDirections[0] << endl;
 
-    //shader.setUniform1i("num", 1);
-    //// Pass in address of array start
-    //shader.setUniform1fv("moveFrame", &moveTest[0], 2);
-    //shader.setUniform1fv("pos", &flatTest[0], 2);
-    //cout << "Number of people: " << haloMap.size() << endl;
+//    shader.setUniform1i("num", 1);
+//    // Pass in address of array start
+//    shader.setUniform1fv("moveFrame", &moveTest[0], 2);
+//    shader.setUniform1fv("pos", &flatTest[0], 2);
+    cout << "Number of people: " << haloMap.size() << endl;
 
     shader.setUniform1f("occupied", occupiedFrame);
     // cout << "Occupied: " << (haloMap.size() > 0) << endl;

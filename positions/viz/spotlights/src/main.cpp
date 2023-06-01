@@ -10,8 +10,9 @@ int main( ){
     ofGLFWWindowSettings settings;
     settings.setGLVersion(3,2);
 	settings.windowMode = OF_FULLSCREEN;
-    settings.multiMonitorFullScreen = true;
-    settings.setSize(1920, 2400);
+//    settings.multiMonitorFullScreen = true;
+//    settings.setSize(1920, 2400);
+//    settings.setSize(1920, 1080);
 #endif
     ofCreateWindow(settings);
     
