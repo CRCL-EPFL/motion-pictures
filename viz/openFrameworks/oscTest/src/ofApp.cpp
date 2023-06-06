@@ -8,10 +8,6 @@ void ofApp::setup(){
 
 	// open an outgoing connection to HOST:PORT
 	sender.setup(HOST, PORT);
-
-	// preload image to send into a buffer
-	imgAsBuffer = ofBufferFromFile("of-logo.png", true);
-    keyVal = 0;
     
     active = false;
 }

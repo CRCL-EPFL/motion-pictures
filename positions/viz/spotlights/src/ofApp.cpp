@@ -32,7 +32,7 @@ void ofApp::setup(){
     parameters.add(gamma.set("Gamma", 2.0, 1.0, 5.0));
     parameters.add(a.set("Multiplier", .5, 0., 1.0));
     parameters.add(blendExp.set("Blend Power", 1, 1, 3));
-    parameters.add(overlap.set("Overlap", 630, 60, 900));
+    parameters.add(overlap.set("Overlap", 60, 60, 900));
     gui.setup(parameters);
 }
 
@@ -63,7 +63,7 @@ void ofApp::update(){
                 int tempX = int(m.getArgAsFloat(baseInd + 1) * ofGetWidth());
                 int tempY = int(m.getArgAsFloat(baseInd + 2) * ofGetHeight());
 
-                cout << "x: " << tempX << ", y: " << tempY << endl;
+//                cout << "x: " << tempX << ", y: " << tempY << endl;
 
                 float tempDir = float(m.getArgAsFloat(baseInd + 3));
                 //cout << "Temporary direction: " << tempDir << endl;
@@ -199,11 +199,8 @@ void ofApp::update(){
             flatCoords[it] = comp.second.x;
             flatCoords[it+1] = comp.second.y;
 
-            std::cout <<"FLATTENED: " << flatCoords[it] << ", " << flatCoords[it+1] << endl;
             
             flatHues[it] = comp.second.hue;
-            
-            std::cout <<"FLATTENED H: " << flatHues[it] << endl;
             
             flatMoveFrames[it] = comp.second.moveFrame;
             flatDirections[it] = comp.second.destAngle;
@@ -275,14 +272,14 @@ void ofApp::draw(){
     //shader.setUniform1fv("directions", &dirTest[0], haloMap.size()*2);
     shader.setUniform1fv("disFrame", &flatDisFrames[0], adjNum);
     //shader.setUniform1iv("priorities", &flatPriorities[0], haloMap.size()*2);
-
-    //cout << "DIRECTIONS: " << flatDirections[0] << endl;
+    
+//    cout << "POSITIONS X: " << flatCoords[0] << ", Y: " << flatCoords[1] << endl;
+//    cout << "DIRECTIONS: " << flatDirections[0] << endl;
 
 //    shader.setUniform1i("num", 1);
 //    // Pass in address of array start
 //    shader.setUniform1fv("moveFrame", &moveTest[0], 2);
 //    shader.setUniform1fv("pos", &flatTest[0], 2);
-    cout << "Number of people: " << haloMap.size() << endl;
 
     shader.setUniform1f("occupied", occupiedFrame);
     // cout << "Occupied: " << (haloMap.size() > 0) << endl;
@@ -295,7 +292,7 @@ void ofApp::draw(){
     ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
     shader.end();
 
-    //gui.draw();
+    gui.draw();
 
 }
 
