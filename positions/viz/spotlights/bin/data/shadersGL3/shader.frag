@@ -99,7 +99,7 @@ vec4 spotlight(vec2 uv, vec2 pos, float rad, vec3 color, float angle, int index)
     // Adjust blurLevel according to movement state
     // 0 results in a round circle
     // Set to + .49 to smooth 'bottom' edge
-    float blurLevel = (lcoords.y/rad * 0.5 + 0.49) * moveFrame[index];
+    float blurLevel = (lcoords.y/rad * 0.5 + 0.49) * clampMove;
     
     // Blur is only positive, greater as it gets farther from center in direction
     // When y distance > rad, blurLevel
@@ -218,28 +218,29 @@ void main() {
         vec2 posRel = vec2(pos[i]/res.x, 1 - (pos[i+1]/res.y));
         vec2 center = res.xy * posRel;
         
-        float radius = 0.3 * res.y * (1. - disFrame[i]);
+        float radius = 0.3 * res.y;
+//        float radius = 0.3 * res.y * (1. - disFrame[i]);
 //        vec3 col = genColor(i, length(center - uv));
-        vec3 col = hsv2rgbAlt(vec3(hues[i], .7, .99), length(center - uv));
+        vec3 col = hsv2rgb(vec3(hues[i], .7, .99), length(center - uv));
         vec4 cg = spotlight(uv, center, radius, col, 1., i);
         vec4 ch = halo(uv, vec2(center.x, center.y+1.5), radius, col);
 
         float offCenter = center.y - (overlap/2.);
 //        vec3 colBot = genColor(i, length(offCenter - uv));
-        vec3 colBot = hsv2rgbAlt(vec3(hues[i], .7, .99), length(center - uv));
+        vec3 colBot = hsv2rgb(vec3(hues[i], .7, .99), length(center - uv));
         vec4 cgBot = spotlight(uv, vec2(center.x, offCenter), radius, col, 1., i);
         vec4 chBot = halo(uv, vec2(center.x, offCenter + 1.5), radius, colBot);
         
         // Draw layered, works when not on GPU
 //        color = mix(color, cg.rgb, cg.a*(1. - disFrame[i]));
 //        color = color + cg.rgb;
-        color = color + ch.rgb;
-//        color = color + cg.rgb*(1.-disFrame[i]);
+//        color = color + ch.rgb;
+        color = color + cg.rgb*(1.-disFrame[i]);
 
 //        colorBot = mix(colorBot, cgBot.rgb, cgBot.a *(1. - disFrame[i]));
 //        colorBot = colorBot + cgBot.rgb;
-        colorBot = colorBot + chBot.rgb;
-        //colorBot = colorBot + cgBot.rgb*(1.-disFrame[i]);
+//        colorBot = colorBot + chBot.rgb;
+        colorBot = colorBot + cgBot.rgb*(1.-disFrame[i]);
     }
 
     color = color*mask;

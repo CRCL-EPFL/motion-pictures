@@ -19,16 +19,16 @@ void ofApp::update(){
     float x = ofMap(ofGetMouseX(), 0, ofGetWidth(), 0.f, 1.f, true);
     float y = ofMap(ofGetMouseY(), 0, ofGetHeight(), 0.f, 1.f, true);
     float dir = atan2(.5 - y, .5 - x);
-    cout << "DIR: " << dir << endl;
     
     m.setAddress("/points");
     m.addIntArg(keyVal);
     m.addFloatArg(x);
     m.addFloatArg(y);
     m.addFloatArg(dir);
-    cout << "x: " << x << ", y: " << y << endl;
+    
     if (active)
     {
+        cout << "ACTIVE --- x: " << x << ", y: " << y << endl;
         sender.sendMessage(m, false);
     }
 }
@@ -56,23 +56,6 @@ void ofApp::keyPressed(int key){
 	// Activate/deactivate the message stream
 	if(key == 'a' || key == 'A'){
         active = !active;
-	}
-
-	// send an image
-	// note: the size of the image depends greatly on your network buffer sizes,
-	// if an image is too big the message won't come through and you may need
-	// to break it up into multiple blobs
-	if(key == 'i' || key == 'I'){
-
-		// load image from buffer
-		img.load(imgAsBuffer);
-
-		// send as a binary blobx
-		ofxOscMessage m;
-		m.setAddress("/image");
-		m.addBlobArg(imgAsBuffer);
-		sender.sendMessage(m);
-		ofLog() << "sending image with size: " << imgAsBuffer.size();
 	}
     
     // delete compass
@@ -144,11 +127,6 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-	ofxOscMessage m;
-	m.setAddress("/mouse/button");
-	m.addIntArg(1);
-	m.addStringArg("down");
-	sender.sendMessage(m, false);
 }
 
 //--------------------------------------------------------------

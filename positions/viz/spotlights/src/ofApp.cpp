@@ -135,19 +135,20 @@ void ofApp::update(){
                     cout << ofGetElapsedTimef() << ": Received dir for " << id << " to " << direction << endl;
                 }
             }
-            else if (m.getAddress() == "/points/disappear") {
-                // TO-DO
-                // pass compass id(s), execute their delete() functions
-                // moves to separate data structure
-                for (int i = 0; i < m.getNumArgs(); i++) {
-                    int id = m.getArgAsInt(i);
-
-                    haloMap[id].closeDown();
-                    // insert id, compass pointer pair into disappearStore
-    //                disappearStore.insert(make_pair(id, &compassMap[id]));
-                    disappearStore.push_back(id);
-                }
-            }
+            // Comment out for now 05/06
+//            else if (m.getAddress() == "/points/disappear") {
+//                // TO-DO
+//                // pass compass id(s), execute their delete() functions
+//                // moves to separate data structure
+//                for (int i = 0; i < m.getNumArgs(); i++) {
+//                    int id = m.getArgAsInt(i);
+//
+//                    haloMap[id].closeDown();
+//                    // insert id, compass pointer pair into disappearStore
+//    //                disappearStore.insert(make_pair(id, &compassMap[id]));
+//                    disappearStore.push_back(id);
+//                }
+//            }
         }
         
     }
@@ -291,7 +292,7 @@ void ofApp::draw(){
     ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
     shader.end();
 
-    gui.draw();
+//    gui.draw();
 
 }
 
