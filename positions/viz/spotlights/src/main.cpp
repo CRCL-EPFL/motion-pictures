@@ -12,7 +12,7 @@ int main( ){
 //	settings.windowMode = OF_FULLSCREEN;
 //    settings.multiMonitorFullScreen = true;
 //    settings.setSize(1920, 2400);
-//    settings.setSize(1920, 1080);
+    settings.setSize(1920, 1080);
 #endif
     ofCreateWindow(settings);
     

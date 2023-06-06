@@ -42,7 +42,7 @@ private:
     
     
 public:
-    void setup(int _id, float _hue);
+    void setup(int _id, float _hue, float _x, float _y);
     void draw();
     void update();
     void updateLocation(float _x, float _y, float _dir);

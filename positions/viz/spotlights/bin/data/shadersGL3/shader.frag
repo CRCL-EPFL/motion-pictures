@@ -8,10 +8,6 @@ uniform int num;
 uniform float moveFrame[10];
 uniform float disFrame[10];
 uniform float directions[10];
-//uniform int priorities[10];
-// layout: [x, y, state, opacity, direction, color]
-// uniform float data[60];
-
 out vec4 fragColor;
 
 uniform int overlap;
@@ -50,7 +46,7 @@ float map(float value, float min1, float max1, float min2, float max2){
     return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
 }
 
-vec3 hsv2rgbAlt(vec3 c, float dist)
+vec3 hsv2rgb(vec3 c, float dist)
 {
     float h = c.x;
     h += GOLD;
@@ -95,8 +91,10 @@ vec2 rotate(vec2 pivot, vec2 uv, float angle){
 vec4 spotlight(vec2 uv, vec2 pos, float rad, vec3 color, float angle, int index) {
     vec2 lcoords = rotate(pos, uv, directions[index]);
 
+    float clampMove = clamp(moveFrame[index], 0., 1.);
+
     // Shrink radius based on moveFrame
-    rad = (rad * map(moveFrame[index], 0., 1., .2, 1.));
+    rad = (rad * map(clampMove, 0., 1., .2, 1.));
     
     // Adjust blurLevel according to movement state
     // 0 results in a round circle

@@ -95,7 +95,7 @@ void ofApp::update(){
 
                     cout << "hue: " << hue << endl;
 
-                    haloMap[coordId].setup(coordId, hue);
+                    haloMap[coordId].setup(coordId, hue, tempX, tempY);
                 }
             }
         }
@@ -199,7 +199,6 @@ void ofApp::update(){
             flatCoords[it] = comp.second.x;
             flatCoords[it+1] = comp.second.y;
 
-            
             flatHues[it] = comp.second.hue;
             
             flatMoveFrames[it] = comp.second.moveFrame;
