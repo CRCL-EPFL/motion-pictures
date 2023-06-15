@@ -14,9 +14,6 @@ void ofApp::setup(){
     
     ofHideCursor();
     
-    // deleteEvent triggers this listener
-    ofAddListener(Halo::del, this, &ofApp::delHalo);
-    
     // set up osc receiver
     ofLog() << "Listening for OSC messages on port " << PORT;
     receiver.setup(PORT);
@@ -71,8 +68,8 @@ void ofApp::update(){
                 if (haloMap.find(coordId) != haloMap.end()){
                     // cout << "Found " << id << " x: " << tempX << " --- ";
                     //cout << "ID " << haloMap.find(coordId) -> first << " in map" << endl;
-                    haloMap[coordId].updateLocation(tempX, tempY, tempDir);
-                    haloMap[coordId].update();
+                    haloMap[coordId].updateValues(tempX, tempY, tempDir);
+                    haloMap[coordId].updateAnimation();
                 }
                 // If not at the max size
                 // Create new Halo object
@@ -100,7 +97,7 @@ void ofApp::update(){
             }
         }
 
-        // only listen to message if id in map
+        // Only listen to message if id in map
         if (haloMap.find(id) != haloMap.end()){
             if (m.getAddress() == "/points/state"){
                 // for (int i = 0; i <m.getNumArgs(); i += 2){
@@ -115,53 +112,49 @@ void ofApp::update(){
                  haloMap[id].setMoveAnimation();
                  cout << ofGetElapsedTimef() << ": Received state for " << id << " to " << stateId << endl;
             }
-            else if (m.getAddress() == "/points/delete"){
-                int id = m.getArgAsInt(0);
-
-                /*haloMap[id].setDeleteAnimation();
-                disappearStore.push_back(id);*/
-                // Immediately delete
-                haloMap.erase(id);
-            }
+            
+            // Send message to change direction, only used if direction not continuously changed
             else if (m.getAddress() == "/points/direction"){
                 for (int i = 0; i < m.getNumArgs(); i += 2){
                     int id = m.getArgAsInt(i);
                     float direction = m.getArgAsFloat(i+1);
-                    if (direction != 100){
-                        haloMap[id].setDirAnimation(direction);
-                    }
-                    // haloMap[id].setDirAnimation(direction);
-
-                    cout << ofGetElapsedTimef() << ": Received dir for " << id << " to " << direction << endl;
+                    haloMap[id].setDirAnimation(direction);
                 }
             }
-            // Comment out for now 05/06
-//            else if (m.getAddress() == "/points/disappear") {
-//                // TO-DO
-//                // pass compass id(s), execute their delete() functions
-//                // moves to separate data structure
-//                for (int i = 0; i < m.getNumArgs(); i++) {
-//                    int id = m.getArgAsInt(i);
-//
-//                    haloMap[id].closeDown();
-//                    // insert id, compass pointer pair into disappearStore
-//    //                disappearStore.insert(make_pair(id, &compassMap[id]));
-//                    disappearStore.push_back(id);
-//                }
-//            }
+            
+            // Send message to relay frames missing for each object that has disappeared
+            else if (m.getAddress() == "/points/disappear") {
+                for (int i = 0; i < m.getNumArgs(); i += 2){
+                    int id = m.getArgAsInt(i);
+                    // How many frames the object has been missing for
+                    float missing = m.getArgAsFloat(i + 1);
+                    cout << "Missing: " << missing << endl;
+                    
+                    haloMap[id].updateDisappear(missing);
+                }
+            }
+            
+            else if (m.getAddress() == "/points/reappear") {
+                for (int i = 0; i < m.getNumArgs(); i++){
+                    int id = m.getArgAsInt(i);
+                    
+                    haloMap[id].setAppearAnimation();
+                }
+            }
+            
+            else if (m.getAddress() == "/points/delete"){
+                int id = m.getArgAsInt(0);
+
+                // Immediately delete
+                haloMap.erase(id);
+            }
+            
+            else if (m.getAddress() == "/points/create"){
+                
+            }
         }
         
     }
-//    if (haloMap.size() > 0){
-//        for (auto& comp : haloMap){
-//            if (comp.second.startDelete){
-//                comp.second.closeDown();
-//                cout << "In delete if" << endl;
-////                haloMap.erase(comp.first);
-//            }
-//        }
-//    }
-//  
 
     if (haloMap.size() > 0){
 
@@ -227,15 +220,7 @@ void ofApp::update(){
         }
     }
     
-    if (disappearStore.size() > 0) {
-            // not ideal, since for deletion will search through entire disappearStore(), look into threading and mutex
-            for (int i = 0; i < disappearStore.size(); i++){
-                haloMap[disappearStore[i]].closeDown();
-            }
-    }
-
     occupiedFrame = ofxeasing::map_clamp(ofGetElapsedTimef(), occupiedStart, occupiedEnd, occupiedStartVal, occupiedEndVal, &ofxeasing::cubic::easeOut);
-    // cout << "occupiedFrame: " << occupiedFrame << endl;
 }
 
 //--------------------------------------------------------------
@@ -294,23 +279,6 @@ void ofApp::draw(){
 
 //    gui.draw();
 
-}
-
-// callback on delete event
-void ofApp::delHalo(int & key){
-    cout << "In delHalo" << endl;
-    vector<int>::iterator it = disappearStore.begin();
-        for (; it != disappearStore.end(); ){
-            if (*it == key){
-                it = disappearStore.erase(it);
-                cout << "Erased " << *it << " from disStore" << endl;
-            } else {
-                ++ it;
-            }
-        }
-    haloMap.erase(key);
-    cout << "Past erase" << endl;
-    cout << "Size of map after delete: " << haloMap.size() << endl;
 }
 
 void ofApp::setOccupiedAnimation(bool state){

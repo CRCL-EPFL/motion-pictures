@@ -39,4 +39,9 @@ class ofApp : public ofBaseApp{
         int keyVal;
     
     bool active;
+    float disCount;
+    
+    // Maximum disappeared
+    float maxDis;
+    bool disappeared;
 };

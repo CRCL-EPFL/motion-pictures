@@ -117,7 +117,9 @@ vec4 spotlight(vec2 uv, vec2 pos, float rad, vec3 color, float angle, int index)
     // NOTE: Revisit this, can distance be negative? How is the 'bottom' becoming transparent?
     float L0 = rad * (1.0 - blurLevel);
     // End
-    float L1 = rad + (300. * blurLevel);
+//    float L1 = rad + (300. * blurLevel);		
+    // L1 modulated by disFrame to grow larger as it comes in
+    float L1 = rad + ((100. + 200. * (1. - disFrame[index])) * blurLevel);
     
     // Fluctuating L1
     // Control width
@@ -219,6 +221,7 @@ void main() {
         vec2 center = res.xy * posRel;
         
         float radius = 0.3 * res.y;
+        // Tying to disFrame, actually makes spotlight larger when it spawns
 //        float radius = 0.3 * res.y * (1. - disFrame[i]);
 //        vec3 col = genColor(i, length(center - uv));
         vec3 col = hsv2rgb(vec3(hues[i], .7, .99), length(center - uv));

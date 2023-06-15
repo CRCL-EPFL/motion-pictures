@@ -61,15 +61,14 @@ class Tracker():
             # For each registered object, check if incoming ids match
             if id not in incomingIds:
                 self.disappeared[id] += 1
-                self.client.send_message("/points/disappear", int(id))
+                # Pass id of disappeared object and percentage completion
+                self.client.send_message("/points/disappear", int(id), min(self.disappeared / self.maxDisappeared, 1))
 
                 if self.disappeared[id] > self.maxDisappeared:
-                    self.deregister(id)
                     self.client.send_message("/points/delete", int(id))
+                    self.deregister(id)
 
         # Compare incoming to existing to see if any new objects
-        # print(list(self.objects.keys()))
-        # print(len(self.objects))
         for i, incoming in enumerate(incomingIds):
             if incoming not in list(self.objects.keys()):
                 self.register(incoming, (incomingPoints[i][0], incomingPoints[i][1], 0, 0))
@@ -84,7 +83,7 @@ class Tracker():
                 kResult = self.filters[incoming].predict(kInput)
                 kFormat = (kResult[0][0] / self.width, kResult[1][0] / self.height, kResult[2][0], kResult[3][0])
 
-                # STATE
+                # HANDLE STATE
                 combinedVel = abs(kResult[2][0]) + abs(kResult[3][0])
                 # print("Combined velocity: " + str(combinedVel))
 
@@ -96,11 +95,12 @@ class Tracker():
                     self.moving[incoming] = 0
                     self.client.send_message("/points/state", [int(incoming), 0])
 
-                # print("Moving? - " + str(self.moving[incoming]))
-
-                 # Update object points with smoothed point
+                # Update object points with smoothed point
                 self.objects[incoming] = kFormat
-                self.disappeared[incoming] = 0
+                # If incoming id previously had disappeared count > 0 but is now receiving data, reset disappeared and send reappear message
+                if self.disappeared[incoming] > 0:
+                    self.disappeared[incoming] = 0
+                    self.client.send_message("/points/reappear", int(incoming))
 
                 self.directions[incoming] = math.atan2(kResult[3][0], kResult[2][0])
 
