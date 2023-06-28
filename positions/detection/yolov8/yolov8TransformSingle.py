@@ -2,6 +2,17 @@ import cv2
 from ultralytics import YOLO
 import numpy as np
 from tracking.tracker import Tracker
+import sqlite3
+import datetime
+
+# SQLite connection
+con = sqlite3.connect("../data/sql/positions.db")
+
+# Create table if not already existing
+con.execute("CREATE TABLE IF NOT EXISTS positions(id, time, x, y)")
+
+# Make array to store data tuples for the past x minutes
+positions = []
 
 # Settings for unwarp fisheye 
 DIM=(1280, 720)
@@ -40,6 +51,10 @@ matrix = cv2.getPerspectiveTransform(inputPoints, convertedPoints)
 
 track = Tracker((w, h))
 
+frameNum = 0
+# Frame count to refresh
+interval = 1000
+
 # Loop through the video frames
 while cap1.isOpened():
     # Read a frame from the video
@@ -52,6 +67,14 @@ while cap1.isOpened():
     # Points and ids to pass
     points1 = []
     ids1 = []
+
+    # Increment frame number and check if at insert interval
+    frameNum += 1
+    if frameNum % interval == 0:
+        # If at frame interval then insert data into db
+        con.executemany("INSERT INTO positions(id, time, x, y) VALUES (?, ?, ?, ?)", positions)
+        # Reset values
+        positions = []
 
     if success1:
         frame1 = cv2.rotate(frame1, cv2.ROTATE_180)
@@ -91,6 +114,8 @@ while cap1.isOpened():
         objects = track.update(ids1, points1)
 
         for (id, point) in objects.items():
+            # Add data point to the batch to be inserted into the db
+            positions.append((id, datetime.datetime.now(), point[0], point[1]))
             # cv2.circle(frame1, centroid, 4, (0,0,255), -1)
             formatPoint = (int(point[0] * w), int(point[1] * h))
             # print("POINT to draw: " + str(formatPoint))
