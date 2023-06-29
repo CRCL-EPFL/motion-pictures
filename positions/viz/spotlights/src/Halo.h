@@ -44,18 +44,14 @@ private:
 public:
     void setup(int _id, float _hue, float _x, float _y);
     void draw();
-    void update();
-    void updateLocation(float _x, float _y, float _dir);
+    void updateAnimation();
+    void updateValues(float _x, float _y, float _dir);
+    void updateDisappear(float _mis);
     
+    // Functions for setting start and end times of animations
     void setMoveAnimation();
     void setDirAnimation(float dir);
-    
-    void disappear();
-    void closeDown();
-    // delete stuff
-    void notifyDel();
-    void setDeleteAnimation();
-    void setCloseAnimation();
+    void setAppearAnimation();
     
     int key;
     float x;
@@ -63,10 +59,6 @@ public:
     float destAngle;
     
     float hue;
-    // tracks how far in start/stop animation
-    float startStop;
-    
-    float beginEnd;
     
     // passed to shader
     float moveFrame;
@@ -74,12 +66,8 @@ public:
     
     bool moving;
     
-    bool deleted;
 //    tracks whether the compass has disappeared or not, used to make sure that compasses are not updating and disappearing at the same time
     bool disappeared;
-    bool startDelete;
-    
-    static ofEvent<int> del;
     
     // ofxRaycaster
     ofxraycaster::Ray2D ray;

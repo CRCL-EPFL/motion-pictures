@@ -5,8 +5,6 @@
 #include "Halo.h"
 #include <iostream>
 
-ofEvent<int> Halo::del = ofEvent<int>();
-
 Halo::Halo(){
     
 }
@@ -26,19 +24,16 @@ void Halo::setup(int _id, float _hue, float _x, float _y){
 
     // Set these on setup to be sure first frame visual glitches don't appear
     destAngle = 0;
-    //moveFrame = 0;
+//    moveFrame = 0;
     
+    // Use setAnimation() for this?
     moveStartTime = ofGetElapsedTimef();
-    moveEndTime = moveStartTime + 1;
+    moveEndTime = moveStartTime + 2;
     
-    fadeStartTime = ofGetElapsedTimef();
-    fadeEndTime = fadeStartTime + 3;
+    setAppearAnimation();
     
     // set disFrame so that it's not < 0 at the start
     disFrame = 0;
-    
-    startDelete = false;
-    deleted = false;
     
     // Set up polyline of edges
     edges.lineTo(0, 0);
@@ -66,12 +61,12 @@ void Halo::draw(){
     segment.draw();
 }
 
-void Halo::updateLocation(float _x, float _y, float _dir){
+void Halo::updateValues(float _x, float _y, float _dir){
     x = _x;
     y = _y;
-
+    
+    // Update destAngle
     destAngle = _dir;
-    //cout << "Direction in Halo fx: " << destAngle << endl;
     
     // Update polyline circle center
     // Clear points first
@@ -80,27 +75,33 @@ void Halo::updateLocation(float _x, float _y, float _dir){
     core.setClosed(true);
 }
 
-void Halo::update(){
+void Halo::updateDisappear(float _mis){
+    disappeared = true;
+    disFrame = ofxeasing::map_clamp(_mis, 0., 1., 0., 1., &ofxeasing::cubic::easeOut);
+    
+    // If not already !moving, then change state
+    if (moving) {
+        setMoveAnimation();
+    }
+}
+
+void Halo::updateAnimation(){
     float time = ofGetElapsedTimef();
     
-    // CHECK
-    // Is this influencing the fade in?
-    if (!startDelete){
+    // Initial fade in, condition only satisfied at setup because fadeStart and fadeEnd while !disappeared
+    if (!disappeared){
         disFrame = ofxeasing::map_clamp(time, fadeStartTime, fadeEndTime, 1., 0., &ofxeasing::cubic::easeOut);
-//        cout << "Disappear frame: " << disFrame << endl;
     }
-    //disFrame = 0;
     
-    // set animation frames
+    // Animate move state change
     if (moving){
-        //cout << "Start frames" << endl;
         moveFrame = ofxeasing::map_clamp(time, moveStartTime, moveEndTime, 0, 1, &ofxeasing::cubic::easeOut);
     } else if (!moving){
-        //cout << "Stop frames" << endl;
         moveFrame = ofxeasing::map_clamp(time, moveStartTime, moveEndTime, 1, 0, &ofxeasing::cubic::easeOut);
     }
     
-    // Animated destination angle change
+    // Animate destination angle change
+    // Only necessary if not continuously updating angle
     //destAngle = ofxeasing::map_clamp(time, dirStartTime, dirEndTime, dirStartVal, dirEndVal, &ofxeasing::quart::easeOut);
     //
     //// wrap angle back
@@ -118,29 +119,17 @@ void Halo::update(){
     glm::vec2 surfaceNorm;
     ray.intersectsPolyline(edges, rayDist, surfaceNorm);
     edgeIntersect = ray.getOrigin() + ray.getDirection() * rayDist;
-}
-
-void Halo::closeDown(){
-    // advance opacity animation
-    cout << "In closeDown()" << endl;
-    disFrame = ofxeasing::map_clamp(ofGetElapsedTimef(), delStartTime, delEndTime, 0.0, 1., &ofxeasing::cubic::easeOut);
-    
-        
-    if (ofGetElapsedTimef() >= delEndTime && !deleted){
-        deleted = true;
-        cout << "Changed deleted to true" << endl;
-            
-        notifyDel();
-    }
-}
+}		
 
 void Halo::setMoveAnimation(){
     moveStartTime = ofGetElapsedTimef();
     moveEndTime = moveStartTime + .5;
+    
+    // Change moving state
     moving = !moving;
-    cout << "SETTING MOVE " << endl;
 }
 
+// Calculates shortest angular path and determines duration of animation based on path length
 void Halo::setDirAnimation(float dir){
     dirStartTime = ofGetElapsedTimef();
     
@@ -161,25 +150,16 @@ void Halo::setDirAnimation(float dir){
     else if (destAngle > M_PI/2 && dir < -M_PI/2){
         dirEndVal = destAngle + diff;
     }
-    
-//    cout << "Direction: " << dir << endl;
  
     // set end time based on difference between start and end
     float duration = ofMap(diff, 0, M_PI, 1, 2);
     dirEndTime = dirStartTime + duration;
 }
 
-void Halo::setDeleteAnimation(){
-    cout << "In setDeleteAnimation()" << endl;
-    delStartTime = ofGetElapsedTimef();
-    // in disappear(), will trigger the callback once it reaches this
-    delEndTime = delStartTime + 3;
+// Set start and end time for appear animation
+void Halo::setAppearAnimation(){
+    fadeStartTime = ofGetElapsedTimef();
+    fadeEndTime = fadeStartTime + 3;
     
-    startDelete = true;
-    cout << "startDelete = " << startDelete << endl;
-}
-
-void Halo::notifyDel(){
-    cout << "notifyDel()" << endl;
-    ofNotifyEvent(del, key);
+    disappeared = false;
 }
