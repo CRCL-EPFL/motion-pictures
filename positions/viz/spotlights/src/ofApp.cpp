@@ -32,7 +32,7 @@ void ofApp::setup(){
     parameters.add(gamma.set("Gamma", 2.0, 1.0, 5.0));
     parameters.add(a.set("Multiplier", .5, 0., 1.0));
     parameters.add(blendExp.set("Blend Power", 1, 1, 3));
-    parameters.add(overlap.set("Overlap", 60, 60, 900));
+    parameters.add(overlap.set("Overlap", 630, 60, 900));
     gui.setup(parameters);
 }
 

@@ -16,8 +16,8 @@ void Halo::setup(int _id, float _hue, float _x, float _y){
     cout << "SET UP HALO" << endl;
     hue = _hue;
     
-    //moving = false;
-    moving = true;
+    moving = false;
+    //moving = true;
     
     key = _id;
 
@@ -26,7 +26,7 @@ void Halo::setup(int _id, float _hue, float _x, float _y){
 
     // Set these on setup to be sure first frame visual glitches don't appear
     destAngle = 0;
-    moveFrame = 0;
+    //moveFrame = 0;
     
     moveStartTime = ofGetElapsedTimef();
     moveEndTime = moveStartTime + 1;
