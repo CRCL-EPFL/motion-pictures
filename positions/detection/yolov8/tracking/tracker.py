@@ -32,8 +32,7 @@ class Tracker():
     def register(self, id, point):
         self.objects[id] = point
 
-        print("In register for id: " + str(id))
-        print("In register object point: " + str(self.objects[id]))
+        print("Registering id: " + str(id))
         self.disappeared[id] = 0
 
         self.directions[id] = 0
@@ -62,10 +61,12 @@ class Tracker():
             if id not in incomingIds:
                 self.disappeared[id] += 1
                 # Pass id of disappeared object and percentage completion
-                self.client.send_message("/points/disappear", int(id), min(self.disappeared / self.maxDisappeared, 1))
+                self.client.send_message("/points/disappear", [int(id), min(self.disappeared[id] / self.maxDisappeared, 1.)])
+                # print("Disappear " + str(id))
 
                 if self.disappeared[id] > self.maxDisappeared:
                     self.client.send_message("/points/delete", int(id))
+                    # print("Delete " + str(id))
                     self.deregister(id)
 
         # Compare incoming to existing to see if any new objects

@@ -230,8 +230,8 @@ void main() {
 
         float offCenter = center.y - (overlap/2.);
 //        vec3 colBot = genColor(i, length(offCenter - uv));
-        vec3 colBot = hsv2rgb(vec3(hues[i], .7, .99), length(center - uv));
-        vec4 cgBot = spotlight(uv, vec2(center.x, offCenter), radius, col, 1., i);
+        vec3 colBot = hsv2rgb(vec3(hues[i], .7, .99), length(vec2(center.x, offCenter) - uv));
+        vec4 cgBot = spotlight(uv, vec2(center.x, offCenter), radius, colBot, 1., i);
         vec4 chBot = halo(uv, vec2(center.x, offCenter + 1.5), radius, colBot);
         
         // Draw layered, works when not on GPU
@@ -261,7 +261,7 @@ void main() {
 //    color = corrected + correctedBot;
     
     // APPLY GRAIN
-//    color = applyGrain(uv, color);
+    color = applyGrain(uv, color);
     
     fragColor = vec4( color, 1.0 );
 //    fragColor = vec4( vec3(uv.x/res.x, uv.y/res.y, .7), 1.0 );
