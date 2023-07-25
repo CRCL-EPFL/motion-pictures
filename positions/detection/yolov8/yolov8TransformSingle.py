@@ -6,7 +6,7 @@ import sqlite3
 import datetime
 
 # SQLite connection
-con = sqlite3.connect("../data/sql/positions.db", isolation_level=None)
+con = sqlite3.connect("../data/sql/positions2.db", isolation_level=None)
 
 # Create table if not already existing
 con.execute("CREATE TABLE IF NOT EXISTS positions(id, time, x, y)")
@@ -121,7 +121,7 @@ while cap1.isOpened():
 
         for (id, point) in objects.items():
             # Add data point to the batch to be inserted into the db
-            toAppend = (id, datetime.datetime.now(), point[0], point[1])
+            toAppend = (int(id), datetime.datetime.now(), point[0], point[1])
             positions.append(toAppend)
             # cv2.circle(frame1, centroid, 4, (0,0,255), -1)
             formatPoint = (int(point[0] * w), int(point[1] * h))
