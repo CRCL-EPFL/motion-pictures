@@ -6,7 +6,7 @@ import sqlite3
 import datetime
 
 # SQLite connection
-con = sqlite3.connect("../data/sql/positions.db")
+con = sqlite3.connect("../data/sql/positions2.db", isolation_level=None)
 
 # Create table if not already existing
 con.execute("CREATE TABLE IF NOT EXISTS positions(id, time, x, y)")
@@ -42,7 +42,7 @@ w = 1920
 # h = 1880
 h = 1920
 # Tolerance for how many pixels outside to accept before passing to tracker
-tolerance = 10
+tolerance = 1000
 
 # Corner points to be perspective transformed
 inputPoints = np.float32([[187, 318],[522, 223],[355, 644],[740, 427]])
@@ -53,7 +53,7 @@ track = Tracker((w, h))
 
 frameNum = 0
 # Frame count to refresh
-interval = 1000
+interval = 10
 
 # Loop through the video frames
 while cap1.isOpened():
@@ -68,14 +68,6 @@ while cap1.isOpened():
     points1 = []
     ids1 = []
 
-    # Increment frame number and check if at insert interval
-    frameNum += 1
-    if frameNum % interval == 0:
-        # If at frame interval then insert data into db
-        con.executemany("INSERT INTO positions(id, time, x, y) VALUES (?, ?, ?, ?)", positions)
-        # Reset values
-        positions = []
-
     if success1:
         frame1 = cv2.rotate(frame1, cv2.ROTATE_180)
 
@@ -85,6 +77,20 @@ while cap1.isOpened():
         results1 = model.track(frame1, classes=0, tracker="tracking/config.yaml", imgsz=320, persist=True, verbose=False)
 
         if results1[0].boxes.id != None:
+            # Increment frame number and check if at insert interval
+            frameNum += 1
+            if frameNum % interval == 0:
+                print("Execute insert at " + str(frameNum))
+                # print(positions)
+
+                # If at frame interval then insert data into db
+                con.executemany("INSERT INTO positions VALUES (?, ?, ?, ?)", positions)
+
+                # res = con.execute("SELECT x FROM positions")
+                # print(res.fetchall())
+                # Reset values
+                positions = []
+
             boxes = results1[0].boxes.xyxy.cpu().numpy().astype(int)
             ids = results1[0].boxes.id.cpu().numpy().astype(int)
             # print(ids)
@@ -115,11 +121,14 @@ while cap1.isOpened():
 
         for (id, point) in objects.items():
             # Add data point to the batch to be inserted into the db
-            positions.append((id, datetime.datetime.now(), point[0], point[1]))
+            toAppend = (int(id), datetime.datetime.now(), point[0], point[1])
+            positions.append(toAppend)
             # cv2.circle(frame1, centroid, 4, (0,0,255), -1)
             formatPoint = (int(point[0] * w), int(point[1] * h))
             # print("POINT to draw: " + str(formatPoint))
-            print(point)
+            # print(point)
+            # print(toAppend)
+            # print(positions)
             # print("vecX: " + str(point[2]) + ", vecY: " + str(point[3]))
             # print(point)
             cv2.circle(blank, formatPoint, 8, (0,0,255), -1)

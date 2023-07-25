@@ -80,9 +80,9 @@ void Halo::updateDisappear(float _mis){
     disFrame = ofxeasing::map_clamp(_mis, 0., 1., 0., 1., &ofxeasing::cubic::easeOut);
     
     // If not already !moving, then change state
-    if (moving) {
+    /*if (moving) {
         setMoveAnimation();
-    }
+    }*/
 }
 
 void Halo::updateAnimation(){
