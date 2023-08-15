@@ -108,8 +108,9 @@ void ofApp::update(){
                 // }
 
                  int id = m.getArgAsInt(0);
+                 // The id code for state to change to, 0 is stationary and 1 is moving
                  int stateId = m.getArgAsInt(1);
-                 haloMap[id].setMoveAnimation();
+                 haloMap[id].setMoveAnimation(stateId);
                  cout << ofGetElapsedTimef() << ": Received state for " << id << " to " << stateId << endl;
             }
             

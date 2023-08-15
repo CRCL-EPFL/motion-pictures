@@ -121,12 +121,17 @@ void Halo::updateAnimation(){
     edgeIntersect = ray.getOrigin() + ray.getDirection() * rayDist;
 }		
 
-void Halo::setMoveAnimation(){
+void Halo::setMoveAnimation(int state){
     moveStartTime = ofGetElapsedTimef();
     moveEndTime = moveStartTime + .5;
     
     // Change moving state
-    moving = !moving;
+    if (state == 0) {
+        moving = false;
+    }
+    else if (state == 1) {
+        moving = true;
+    }
 }
 
 // Calculates shortest angular path and determines duration of animation based on path length

@@ -49,7 +49,7 @@ public:
     void updateDisappear(float _mis);
     
     // Functions for setting start and end times of animations
-    void setMoveAnimation();
+    void setMoveAnimation(int state);
     void setDirAnimation(float dir);
     void setAppearAnimation();
     
