@@ -11,3 +11,6 @@ obj/
 *.exp
 *.lib
 *.pdb
+/positions
+/detection
+/viz

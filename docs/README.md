@@ -27,7 +27,14 @@ The hardware setup consists of two commodity projectors (Epson EB2250), an Intel
 
 by Eric Duong and Prof. Stefana Parascho, CRCL, EPFL
 
-With the support of: Maxence Grangeot, Alexandra Pittiglio
+With the support of: 
+
+##### CRCL
+Maxence Grangeot, Alexandra Pittiglio
+##### Habitat Research Center
+Elena Longhin
+##### GIS
+Gilles Guignet, François Perrin, Armin Krkic, Luca Mari
 
 | CRCL | EPFL |
 | --- | --- |
