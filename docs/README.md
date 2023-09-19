@@ -32,13 +32,13 @@ With the support of:
 ##### CRCL
 Maxence Grangeot, Alexandra Pittiglio
 ##### Habitat Research Center
-Elena Longhin
+Elena Longhin, Valentin Bourdon
 ##### GIS
 Gilles Guignet, François Perrin, Armin Krkic, Luca Mari
 
 | CRCL | EPFL |
 | --- | --- |
-| ![crcl](/images/CRCLWordmarkHotPink.png) | ![epfl](https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_EPFL.svg) |
+| ![crcl](/images/crcl.svg) | ![epfl](https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_EPFL.svg) |
 
 [CRCLCRCLCRCL](https://crclcrclcrcl.org/)
 
