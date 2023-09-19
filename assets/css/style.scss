@@ -1,0 +1,25 @@
+---
+---
+
+@import "{{ site.theme }}";
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap');
+
+a {
+    // background-color: black;
+    color: #FF69B4;
+}
+
+a:hover {
+    color: #FF2F97;
+    font-weight: normal;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Roboto Mono';
+    font-weight: normal;
+}
+
+p {
+    font-family: 'Roboto';
+}

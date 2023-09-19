@@ -1,16 +1,5 @@
-# Visual Studio stuff
-*.vs
-*.make
-*.rc
-*.sln
-*.vcxproj
-*.vcxproj.*
-obj/
-*.dll
-*.exe
-*.exp
-*.lib
-*.pdb
-/positions
-/detection
-/viz
+_site
+.sass-cache
+.jekyll-cache
+.jekyll-metadata
+vendor

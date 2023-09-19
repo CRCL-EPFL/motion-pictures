@@ -1,4 +1,11 @@
-![img01](/images/fig1.png)
+---
+# Feel free to add content and custom Front Matter to this file.
+# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
+
+# layout: home
+---
+
+![img01](/assets/img/fig1.png)
 
 Motion Pictures is a micro-scale research installation that investigates how digital projection can transform liminal spaces into more efficient and socially engaging experiences. It began in response to inflexible implementations of COVID-19 social distancing protocols. Stickers, tape, and floor signs can be effective in the right contexts but fail to address the complexity of human movement behavior especially in spaces occupied by both stationary and moving pedestrians. Computation and digital media allow for more dynamic visualizations that can follow occupants and inform them of safe and efficient paths, while automatically adjusting to obstacles and stationary pedestrians. The research intention was not to solely use computation for increasing efficiency of pedestrian movement, but also to create an enjoyable experience through social interaction in the context of restrictions and uncertainties. 
 
@@ -8,7 +15,7 @@ Data collection begins with reading video streams from each of the camera module
 
 The project never collects or stores any personally identifiable information. Video data from the camera system is used for people detection and tracking before being translated to Cartesian coordinates. Only these coordinates are used for the behavior model and light projection.
 
-![img02](/images/fig2.png)
+![img02](/assets/img/fig2.png)
 
 ### VISUALIZATION
 The visualization is generated as a graphical shader that shows each occupant's personal space as a distinct color. "Spotlights" change shape and direction in response to changes in the tracker and model, while also combining in unique ways as occupants interact with one another.
@@ -17,7 +24,7 @@ The visualization is generated as a graphical shader that shows each occupant's 
 
 The hardware setup consists of two commodity projectors (Epson EB2250), an Intel NUC, and two board cameras. Multiple projectors can be connected to adjust size and shape of the covered space, making the system adaptable to different sites and conditions. 
 
-![img03](/images/fig3.png)
+![img03](/assets/img/fig3.png)
 
 --------------
 
@@ -27,16 +34,13 @@ by Eric Duong and Prof. Stefana Parascho, CRCL, EPFL
 
 With the support of: 
 
-##### CRCL
-Maxence Grangeot, Alexandra Pittiglio
-##### Habitat Research Center
-Elena Longhin, Valentin Bourdon
-##### GIS
-Gilles Guignet, François Perrin, Armin Krkic, Luca Mari
+**CRCL:** Maxence Grangeot, Alexandra Pittiglio, Isabelle Cogotti
 
-| CRCL | EPFL |
-| --- | --- |
-| ![crcl](/images/crcl.png) | ![epfl](/images/epfl.png) |
+**Habitat Research Center:** Elena Longhin, Valentin Bourdon
+
+**GIS:** Gilles Guignet, François Perrin, Armin Krkic, Luca Mari
+
+| ![crcl](/assets/img/crcl.png) | ![epfl](/assets/img/epfl.png) |
 
 Learn more about CRCL at [CRCLCRCLCRCL](https://crclcrclcrcl.org/)
 
