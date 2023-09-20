@@ -32,8 +32,15 @@
         {% endif %}
 
         {% if site.status == 'active' %}
-        <p> Status: <mark style="color:green;">ACTIVE</mark> </p>
+        <p> Status: <mark style="color:rgb(76, 255, 76);">ACTIVE</mark> </p>
         {% endif %}
+        {% if site.status == 'maintain' %}
+        <p> Status: <mark style="color:rgb(252, 255, 76);">UNDER MAINTENANCE</mark> </p>
+        {% endif %}
+        {% if site.status == 'inactive' %}
+        <p> Status: <mark style="color:rgb(255, 76, 222);">INACTIVE</mark> </p>
+        {% endif %}
+
 
         {% if site.show_downloads %}
         <ul class="downloads">

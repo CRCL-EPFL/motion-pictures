@@ -34,12 +34,8 @@ With the support of:
 
 **CRCL:** Maxence Grangeot, Alexandra Pittiglio, Isabelle Cogotti
 
-**Habitat Research Center:** Elena Longhin, Valentin Bourdon
+**Habitat Research Center:** Elena Longhin
 
 **GIS:** Gilles Guignet, François Perrin, Armin Krkic, Luca Mari
 
 | ![crcl](/assets/img/crcl.png) | ![epfl](/assets/img/epfl.png) |
-
-Learn more about CRCL at [CRCLCRCLCRCL](https://crclcrclcrcl.org/)
-
-Contact: [eric.duong@epfl.ch](mailto:eric.duong@epfl.ch)
