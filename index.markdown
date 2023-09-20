@@ -1,11 +1,9 @@
 ---
-# Feel free to add content and custom Front Matter to this file.
-# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
-
-# layout: home
 ---
 
 ![img01](/assets/img/fig1.png)
+
+### Research Goal
 
 Motion Pictures is a micro-scale research installation that investigates how digital projection can transform liminal spaces into more efficient and socially engaging experiences. It began in response to inflexible implementations of COVID-19 social distancing protocols. Stickers, tape, and floor signs can be effective in the right contexts but fail to address the complexity of human movement behavior especially in spaces occupied by both stationary and moving pedestrians. Computation and digital media allow for more dynamic visualizations that can follow occupants and inform them of safe and efficient paths, while automatically adjusting to obstacles and stationary pedestrians. The research intention was not to solely use computation for increasing efficiency of pedestrian movement, but also to create an enjoyable experience through social interaction in the context of restrictions and uncertainties. 
 
