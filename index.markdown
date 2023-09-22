@@ -38,4 +38,4 @@ With the support of:
 
 **GIS:** Gilles Guignet, François Perrin, Armin Krkic, Luca Mari
 
-| ![crcl](/assets/img/crcl.png) | ![epfl](/assets/img/epfl.png) |
+| ![crcl](/assets/img/crcl.png) | ![epfl](/assets/img/epfl.png) | ![hrc](/assets/img/hrc.png) |
