@@ -22,7 +22,8 @@ void ofApp::update(){
         
         float x = ofMap(ofGetMouseX(), 0, ofGetWidth(), 0.f, 1.f, true);
         float y = ofMap(ofGetMouseY(), 0, ofGetHeight(), 0.f, 1.f, true);
-        float dir = atan2(.5 - y, .5 - x);
+        //float dir = atan2(.5 - y, .5 - x);
+        float dir = 2.;
         
         m.setAddress("/points");
         m.addIntArg(keyVal);
@@ -31,6 +32,35 @@ void ofApp::update(){
         m.addFloatArg(dir);
         
         sender.sendMessage(m, false);
+
+        // Second spotlight
+        ofxOscMessage n;
+
+        float x1 = .5;
+        float y1 = .5;
+        float dir1 = atan2(.5 - y, .5 - x);
+
+        n.setAddress("/points");
+        n.addIntArg(keyVal+1);
+        n.addFloatArg(x1);
+        n.addFloatArg(y1);
+        n.addFloatArg(dir1);
+
+        sender.sendMessage(n, false);
+
+        ofxOscMessage o;
+
+        /*float x2 = .7;
+        float y2 = .7;
+        float dir2 = atan2(.5 - y, .5 - x);
+
+        o.setAddress("/points");
+        o.addIntArg(keyVal + 2);
+        o.addFloatArg(x2);
+        o.addFloatArg(y2);
+        o.addFloatArg(dir2);
+
+        sender.sendMessage(o, false);*/
     }
     
     if (disappeared) {
@@ -82,6 +112,7 @@ void ofApp::keyPressed(int key){
         ofxOscMessage m;
         m.setAddress("/points/state");
         m.addIntArg(keyVal);
+        m.addIntArg(1);
         sender.sendMessage(m);
     }
     

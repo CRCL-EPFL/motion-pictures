@@ -246,7 +246,7 @@ void main() {
         colorBot = colorBot + cgBot.rgb*(1.-disFrame[i]);
     }
 
-    color = color*mask;
+//    color = color*mask;
     colorBot = colorBot*maskBot;
 
     // Apply gamma correction to top and bottom
@@ -254,10 +254,10 @@ void main() {
     vec3 correctedBot = vec3(pow(colorBot.r, 1./gamma), pow(colorBot.g, 1./gamma), pow(colorBot.b, 1./gamma));
 
     // Mix between masked texture and gamma corrected based on mask value
-    color = mix(corrected, color, mask);
+//    color = mix(corrected, color, mask);
     colorBot = mix(correctedBot, colorBot, maskBot);
 
-    color = color + colorBot;
+//    color = color + colorBot;
 //    color = corrected + correctedBot;
     
     // APPLY GRAIN
