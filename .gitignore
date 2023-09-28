@@ -33,3 +33,7 @@ Makefile
 
 # Random 
 .DS_STORE
+
+# Website
+_site/
+_posts/
