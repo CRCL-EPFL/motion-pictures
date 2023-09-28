@@ -1,6 +1,6 @@
 ---
 layout: default
-lang: en
+lang: fr
 ---
 
 ![img01](/assets/img/fig1.png)

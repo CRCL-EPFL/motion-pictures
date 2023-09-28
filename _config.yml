@@ -23,6 +23,9 @@ email: your-email@example.com
 description: >- # this means to ignore newlines until "baseurl:"
   A research installation that brings together building occupancy analysis methods, trajectory prediction, and digital media
   to understand and mediate shared spaces.
+description_fr : >-
+  Une installation de recherche qui associe les méthodes d'analyse de l'occupation des bâtiments, la prédiction des trajectoires 
+  et les médias numériques pour comprendre les espaces partagés.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: jekyllrb
