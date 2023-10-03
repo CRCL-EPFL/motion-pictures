@@ -5,9 +5,10 @@ lang: en
 
 ![img01](/assets/img/fig1.png)
 
-### Research Goal
+### RESEARCH GOAL
 
-Motion Pictures is a micro-scale research installation that investigates how digital projection can transform liminal spaces into more efficient and socially engaging experiences. It began in response to inflexible implementations of COVID-19 social distancing protocols. Stickers, tape, and floor signs can be effective in the right contexts but fail to address the complexity of human movement behavior especially in spaces occupied by both stationary and moving pedestrians. Computation and digital media allow for more dynamic visualizations that can follow occupants and inform them of safe and efficient paths, while automatically adjusting to obstacles and stationary pedestrians. The research intention was not to solely use computation for increasing efficiency of pedestrian movement, but also to create an enjoyable experience through social interaction in the context of restrictions and uncertainties. 
+Motion Pictures is a small-scale research installation that investigates how digital projections can affect how we use space. Beginning as a response to social distancing protocols, the project has moved toward developing a broader ambient intelligence that responds to human presence. Every few milliseconds, the installation detects people within the marked area and then predicts their movement based on how they have behaved so far. These predictions are translated into visuals on the fly and projected onto the ground beneath occupants. In this way, data flows directly from sensing and computation to being reflected in real space. Unlike methods of building occupancy analysis, this approach involves the occupants at the outset. As such, the installation acts as an interface to advanced spatial computation while maintaining agency.
+Our goal is to unpack this feedback loop and see how computationally-informed suggestions can influence behavior, particularly how biases in the predictive model and even the means of visualization can make this installation a utility for optimizing spatial use or a social actor that encourages people to serendipitously connect.
 
 ### DETECTION AND DATA POLICY
 
@@ -22,7 +23,7 @@ The visualization is generated as a graphical shader that shows each occupant's 
 
 ### SETUP
 
-The hardware setup consists of two commodity projectors (Epson EB2250), an Intel NUC, and two board cameras. Multiple projectors can be connected to adjust size and shape of the covered space, making the system adaptable to different sites and conditions. 
+The hardware setup consists of two projectors, a desktop computer, and two board cameras. Multiple projectors can be connected to adjust size and shape of the covered space, making the system adaptable to different sites and conditions. 
 
 ![img03](/assets/img/fig3.png)
 
