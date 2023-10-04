@@ -18,7 +18,7 @@ Le projet ne recueille ni ne stocke jamais d'informations personnelles identifia
 
 ![img02](/assets/img/fig2.png)
 
-### VISUALIZATION
+### VISUALISATION
 La visualisation est générée sous la forme d'un «shader» qui représente l'espace personnel de chaque occupant sous la forme d'une couleur distincte. Les «spots» changent de forme et de direction en fonction des modifications apportées au traceur et au modèle, tout en se combinant de manière unique en fonction de l'interaction entre les occupants.
 
 ### SETUP
@@ -29,7 +29,7 @@ Le matériel consiste en deux projecteurs, un ordinateur de bureau et deux camé
 
 --------------
 
-#### CREDITS
+#### CRÉDITS
 
 par Eric Duong et Prof. Stefana Parascho, CRCL, EPFL
 
