@@ -32,7 +32,7 @@ Makefile
 *.pt
 
 # Random 
-.DS_STORE
+.DS_Store
 
 # Website
 _site/
